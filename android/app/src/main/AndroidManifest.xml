@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="br.com.leal_apontar">
     <application
         android:label="leal_apontar"
         android:name="${applicationName}"

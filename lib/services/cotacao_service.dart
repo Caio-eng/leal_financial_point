@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:leal_apontar/services/api_key.dart';
 import '../model/moeda.dart';
-import '../model/moeda_dto.dart';
 
 class CotacaoService {
-  static const String apiUrl = "https://economia.awesomeapi.com.br/last";
-  static const String currencies = "USD-BRL";
 
   static Future<Moeda> buscaCotacaoMoedaRecente() async {
-    final url = Uri.parse('$apiUrl/$currencies');
+    final url = Uri.parse(APIKey.apiCotacao);
 
     try {
       final response = await http.get(url);

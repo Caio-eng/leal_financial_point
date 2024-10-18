@@ -1,14 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:leal_apontar/components/currency_text_input_formatter.dart';
 import 'package:leal_apontar/components/custom_snack_bar.dart';
+import 'package:leal_apontar/components/menu.dart';
 import 'package:leal_apontar/services/cotacao_service.dart';
 
 import 'components/custom_Input_decoration.dart';
 import 'model/moeda.dart';
 
 class CotacaoScreen extends StatefulWidget {
-  const CotacaoScreen({super.key});
+  User user;
+  CotacaoScreen({super.key, required this.user});
 
   @override
   State<CotacaoScreen> createState() => _CotacaoScreenState();
@@ -34,6 +37,7 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
         title: const Text('Cotação Recente'),
         backgroundColor: Colors.teal,
       ),
+      drawer: Menu(user: widget.user!),
       body: Form(
         key: _formKey,
         child: FutureBuilder<Moeda>(
