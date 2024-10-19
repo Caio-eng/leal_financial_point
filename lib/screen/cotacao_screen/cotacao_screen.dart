@@ -6,8 +6,8 @@ import 'package:leal_apontar/components/custom_snack_bar.dart';
 import 'package:leal_apontar/components/menu.dart';
 import 'package:leal_apontar/services/cotacao_service.dart';
 
-import 'components/custom_Input_decoration.dart';
-import 'model/moeda.dart';
+import '../../components/custom_Input_decoration.dart';
+import '../../model/moeda.dart';
 
 class CotacaoScreen extends StatefulWidget {
   User user;
@@ -111,7 +111,7 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                         hintText: 'Insira um valor em real',
                         suffixIcon: GestureDetector(
                             onTap: () {
-                              cacularDolar(cotacao.bid);
+                              cacularDolar(cotacao.low);
                             },
                             child: const Icon(Icons.search)),
                       ),
@@ -132,6 +132,30 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                           color: Colors.blueAccent,
                         ),
                       ),
+                    const SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Dólar Atual:',
+                              style: TextStyle(fontSize: 18, color: Colors.black54),
+                            ),
+                            Text(
+                              'R\$ ${(double.parse(cotacao.low) + 0.01).toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Icon(Icons.monetization_on, size: 24, color: Colors.teal),
+                      ],
+                    ),
                     const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,11 +223,17 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
           .replaceAll(',', '.');
 
       double valorReal = double.parse(realValue);
-      double precoDolar = valorReal / double.parse(licitacaoDeCompra);
+      double licitacaoModificada = double.parse(licitacaoDeCompra) + 0.01;
+      double precoDolar = valorReal / licitacaoModificada;
 
       setState(() {
         resultadoDolar = precoDolar;
-        customSnackBar(context, 'Calculo concluído co sucesso', backgroundColor: Colors.green);
+
+        customSnackBar(
+          context,
+          'Cálculo concluído com sucesso.',
+          backgroundColor: Colors.green,
+        );
       });
     }
   }

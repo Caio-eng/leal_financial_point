@@ -43,6 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: Menu(user: widget.user),
       appBar: AppBar(
         title: Text(widget.titulo),
+        centerTitle: true,
         backgroundColor: Colors.teal,
       ),
       body: Center(
