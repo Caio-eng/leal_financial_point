@@ -26,6 +26,11 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -85,7 +90,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                         });
                       },
                     ),
-                    const Text('Todos Lançamentos'),
+                    const Text('Lançamentos'),
                   ],
                 ),
                 Row(
@@ -222,6 +227,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                                     ),
                                   ),
                                 );
+                                saldoCalculado = false;
                                 break;
                               case 'Excluir':
                                 deleteFinancialBox(financialBox.idFinancialBox!);
@@ -284,6 +290,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
               ),
             ),
           );
+          saldoCalculado = false;
         },
         child: const Icon(Icons.add),
       ),
@@ -298,6 +305,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
         'Excluir',
         'Cancelar', () async {
       FinancialBoxService().deleteFinancialBox(idFinancialBox, widget.user.uid);
+      saldoCalculado = false;
       customSnackBar(context, 'Lançamento de caixa excluído com sucesso!');
     });
   }
