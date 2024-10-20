@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:leal_apontar/model/financial_box.dart';
+import 'package:leal_apontar/services/financial_box_service.dart';
 
 import '../../components/currency_text_input_formatter.dart';
 import '../../components/custom_input_decoration.dart';
@@ -8,7 +11,8 @@ import '../../components/custom_snack_bar.dart';
 
 class FinancialBoxRegisterScreen extends StatefulWidget {
   User user;
-  FinancialBoxRegisterScreen({super.key, required this.user});
+  final String? idEditarFinancialBox;
+  FinancialBoxRegisterScreen({super.key, required this.user, this.idEditarFinancialBox});
 
   @override
   State<FinancialBoxRegisterScreen> createState() => _FinancialBoxRegisterScreenState();
@@ -16,12 +20,48 @@ class FinancialBoxRegisterScreen extends StatefulWidget {
 
 class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
-  bool isUpdating = false;
   TextEditingController valorItemCaixaController = TextEditingController();
   TextEditingController descricaoItemCaixaController = TextEditingController();
   final TextEditingController dataItemCaixaController = TextEditingController();
   String? tipoCaixaSelecionado = 'Entrada';
   String? tipoEntradaSaidaSelecionado;
+  late String idFinancialBox = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _recoverFinancialBox();
+  }
+
+  Future<void> _recoverFinancialBox() async {
+    try {
+      DocumentSnapshot financialBoxDoc = await FirebaseFirestore.instance
+          .collection('financial_box')
+          .doc(widget.idEditarFinancialBox)
+          .get();
+
+      if (financialBoxDoc.exists) {
+        Map<String, dynamic> imovelData =
+        financialBoxDoc.data() as Map<String, dynamic>;
+
+        setState(() {
+          idFinancialBox = imovelData['idFinancialBox'] ?? '';
+          tipoCaixaSelecionado = imovelData['tipoCaixaSelecionado'] ?? '';
+          tipoEntradaSaidaSelecionado =
+              imovelData['tipoEntradaSaidaSelecionado'] ?? '';
+          descricaoItemCaixaController.text =
+              imovelData['descricaoItemCaixaController'] ?? '';
+          valorItemCaixaController.text =
+              imovelData['valorItemCaixaController'] ?? '';
+          dataItemCaixaController.text =
+              imovelData['dataItemCaixaController'] ?? '';
+        });
+      }
+    } catch (e) {
+      customSnackBar(context, "Erro ao recuperar item do caixa: $e",
+          backgroundColor: Colors.red);
+    }
+  }
 
   List<DropdownMenuItem<String>> getEntradaOptions() {
     return const [
@@ -33,7 +73,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
 
   List<DropdownMenuItem<String>> getSaidaOptions() {
     return const [
-      DropdownMenuItem(value: 'Compra', child: Text('Compras')),
+      DropdownMenuItem(value: 'Compras', child: Text('Compras')),
       DropdownMenuItem(value: 'Despesas', child: Text('Despesas Gerais')),
       DropdownMenuItem(value: 'Outros', child: Text('Outros')),
     ];
@@ -63,7 +103,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
       appBar: AppBar(
         backgroundColor: Colors.teal,
         centerTitle: true,
-        title: const Text('Cadastrar Item do Caixa'),
+        title: Text(idFinancialBox == '' ? 'Cadastrar Item do Caixa' : 'Atualizar Item do Caixa'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -202,13 +242,11 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                         ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-
-                              tipoCaixaSelecionado == 'Entrada' ? customSnackBar(context, "Entrada registrada com sucesso!", backgroundColor: Colors.green)
-                              : customSnackBar(context, "Saída registrada com sucesso!", backgroundColor: Colors.green);
+                              _saveFinancialBox();
                             }
                           },
-                          child: const Text(
-                            "Cadastrar",
+                          child: Text(
+                            idFinancialBox == '' ? "Cadastrar" : "Atualizar",
                           ),
                         ),
                       ],
@@ -219,5 +257,52 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
             ),
           )),
     );
+  }
+
+  Future<void> _saveFinancialBox() async {
+
+    // Exibe um indicador de carregamento durante o salvamento
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+
+    try {
+
+      if (widget.idEditarFinancialBox != null) {
+        idFinancialBox = widget.idEditarFinancialBox!;
+      } else {
+        idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
+      }
+
+      FinancialBox newFinancialBox = FinancialBox(
+        idFinancialBox: idFinancialBox,
+        tipoCaixaSelecionado: tipoCaixaSelecionado,
+        tipoEntradaSaidaSelecionado: tipoEntradaSaidaSelecionado,
+        descricaoItemCaixaController: descricaoItemCaixaController.text,
+        valorItemCaixaController: valorItemCaixaController.text,
+        dataItemCaixaController: dataItemCaixaController.text,
+      );
+
+      FinancialBoxService().saveFinancialBox(idFinancialBox, widget.user.uid, newFinancialBox);
+      Navigator.of(context).pop();
+
+      customSnackBar(
+        context,
+        widget.idEditarFinancialBox != null
+            ? tipoCaixaSelecionado == 'Entrada' ? "Entrada atualizada com sucesso!" : "Saída atualizada com sucesso!"
+            : tipoCaixaSelecionado == 'Entrada' ? "Entrada registrada com sucesso!" : "Saída registrada com sucesso!",
+        backgroundColor: Colors.green,
+      );
+
+      Navigator.of(context).pop();
+    } catch (e) {
+      Navigator.of(context).pop();
+      customSnackBar(context, "Erro ao cadastrar imóvel: $e",
+          backgroundColor: Colors.red);
+    }
   }
 }
