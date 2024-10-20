@@ -66,7 +66,7 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                           Icon(Icons.attach_money, size: 30, color: Colors.teal),
                           SizedBox(width: 10),
                           Text(
-                            'Real Brasileiro / Dólar Americano ',
+                            'Real / Dólar',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -101,6 +101,7 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                       ),
                       const SizedBox(height: 20),
                       const Divider(thickness: 1.5),
+                      const SizedBox(height: 20),
                       TextFormField(
                         controller: _realController,
                         keyboardType: TextInputType.number,

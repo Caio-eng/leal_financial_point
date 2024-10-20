@@ -103,7 +103,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
       appBar: AppBar(
         backgroundColor: Colors.teal,
         centerTitle: true,
-        title: Text(idFinancialBox == '' ? 'Cadastrar Item do Caixa' : 'Atualizar Item do Caixa'),
+        title: Text(idFinancialBox == '' ? 'Cadastrar Laçamento de Caixa' : 'Atualizar Laçamento de Caixa'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -115,63 +115,55 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            value: tipoCaixaSelecionado,
-                            items: const [
-                              DropdownMenuItem(
-                                  value: 'Entrada', child: Text('Entrada')),
-                              DropdownMenuItem(
-                                  value: 'Saida', child: Text('Saída')),
-                            ],
-                            onChanged: (value) {
-                              setState(() {
-                                tipoCaixaSelecionado = value;
-                                tipoEntradaSaidaSelecionado = null;
-                                descricaoItemCaixaController.text = '';
-                                valorItemCaixaController.text = '';
-                                dataItemCaixaController.text  = '';
-                              });
-                            },
-                            decoration: CustomInputDecoration.build(
-                              labelText: 'Tipo de Caixa',
-                            ),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Por favor, selecione o tipo de caixa';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        const SizedBox(width: 16), // Espaçamento horizontal
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            value: tipoEntradaSaidaSelecionado,
-                            items: tipoCaixaSelecionado == 'Entrada'
-                                ? getEntradaOptions()
-                                : tipoCaixaSelecionado == 'Saida'
-                                ? getSaidaOptions()
-                                : [],
-                            onChanged: (value) {
-                              setState(() {
-                                tipoEntradaSaidaSelecionado = value;
-                              });
-                            },
-                            decoration: CustomInputDecoration.build(
-                              labelText: tipoCaixaSelecionado == 'Entrada' ? 'Tipo da Entrada' : 'Tipo da Saída',
-                            ),
-                            validator: (value) {
-                              if (value == null) {
-                                return 'Por favor, selecione o tipo de entrada/saída';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
+                    DropdownButtonFormField<String>(
+                      value: tipoCaixaSelecionado,
+                      items: const [
+                        DropdownMenuItem(
+                            value: 'Entrada', child: Text('Entrada')),
+                        DropdownMenuItem(
+                            value: 'Saída', child: Text('Saída')),
                       ],
+                      onChanged: (value) {
+                        setState(() {
+                          tipoCaixaSelecionado = value;
+                          tipoEntradaSaidaSelecionado = null;
+                          descricaoItemCaixaController.text = '';
+                          valorItemCaixaController.text = '';
+                          dataItemCaixaController.text  = '';
+                        });
+                      },
+                      decoration: CustomInputDecoration.build(
+                        labelText: 'Tipo de Caixa',
+                      ),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor, selecione o tipo de caixa';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 16), // Espaçamento horizontal
+                    DropdownButtonFormField<String>(
+                      value: tipoEntradaSaidaSelecionado,
+                      items: tipoCaixaSelecionado == 'Entrada'
+                          ? getEntradaOptions()
+                          : tipoCaixaSelecionado == 'Saída'
+                          ? getSaidaOptions()
+                          : [],
+                      onChanged: (value) {
+                        setState(() {
+                          tipoEntradaSaidaSelecionado = value;
+                        });
+                      },
+                      decoration: CustomInputDecoration.build(
+                        labelText: tipoCaixaSelecionado == 'Entrada' ? 'Tipo da Entrada' : 'Tipo da Saída',
+                      ),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'Por favor, selecione o tipo de entrada/saída';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
