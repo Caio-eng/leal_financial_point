@@ -10,6 +10,7 @@ import 'package:leal_apontar/services/financial_box_service.dart';
 import 'package:leal_apontar/services/financial_report_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../components/custom_Input_decoration.dart';
 import '../../components/custom_card_item.dart';
 import '../../components/custom_snack_bar.dart';
 import '../../components/show_custom_alert_dialog.dart';
@@ -28,10 +29,47 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   double saldoAtual = 0;
   bool saldoCalculado = false; // Variável auxiliar para evitar cálculos repetidos
   final TextEditingController _searchController = TextEditingController();
+  String? anoSelecionado = '';
+  String? mesSelecionado = '';
 
   @override
   void initState() {
     super.initState();
+    atualizarAnoEMesSelecionados();
+  }
+
+  void atualizarAnoEMesSelecionados() {
+    DateTime agora = DateTime.now();
+    anoSelecionado = agora.year.toString();
+    mesSelecionado = agora.month.toString().padLeft(2, '0');
+  }
+
+  List<DropdownMenuItem<String>> getAnoOptions() {
+    return const [
+      DropdownMenuItem(value: '', child: Text('Todos os anos')),
+      DropdownMenuItem(value: '2023', child: Text('2023')),
+      DropdownMenuItem(value: '2024', child: Text('2024')),
+      DropdownMenuItem(value: '2025', child: Text('2025')),
+      DropdownMenuItem(value: '2026', child: Text('2026')),
+    ];
+  }
+
+  List<DropdownMenuItem<String>> getMesOptions() {
+    return const [
+      DropdownMenuItem(value: '', child: Text('Todos os mêses')),
+      DropdownMenuItem(value: '01', child: Text('Janeiro')),
+      DropdownMenuItem(value: '02', child: Text('Fevereiro')),
+      DropdownMenuItem(value: '03', child: Text('Março')),
+      DropdownMenuItem(value: '04', child: Text('Abril')),
+      DropdownMenuItem(value: '05', child: Text('Maio')),
+      DropdownMenuItem(value: '06', child: Text('Junho')),
+      DropdownMenuItem(value: '07', child: Text('Julho')),
+      DropdownMenuItem(value: '08', child: Text('Agosto')),
+      DropdownMenuItem(value: '09', child: Text('Setembro')),
+      DropdownMenuItem(value: '10', child: Text('Outubro')),
+      DropdownMenuItem(value: '11', child: Text('Novembro')),
+      DropdownMenuItem(value: '12', child: Text('Dezembro')),
+    ];
   }
 
   @override
@@ -74,6 +112,45 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   saldoCalculado = false; // Reseta cálculo de saldo ao digitar
                 });
               },
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: anoSelecionado,
+                    items: getAnoOptions(),
+                    onChanged: (value) {
+                      setState(() {
+                        anoSelecionado = value;
+                        saldoCalculado = false;
+                        mesSelecionado = '';
+                      });
+                    },
+                    decoration: CustomInputDecoration.build(
+                      labelText: 'Filtro pelo Ano',
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16), // Espaçamento horizontal
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    value: mesSelecionado,
+                    items: getMesOptions(),
+                    onChanged: (value) {
+                      setState(() {
+                        mesSelecionado = value;
+                        saldoCalculado = false; // Reseta cálculo de saldo ao mudar mes
+                      });
+                    },
+                    decoration: CustomInputDecoration.build(
+                      labelText: 'Filtro pelo Mês',
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           Padding(
@@ -174,6 +251,14 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                           descricaoItemCaixaController.contains(searchQuery) ||
                           valorItemCaixaController.contains(searchQuery) ||
                           dataItemCaixaController.contains(searchQuery);
+                    }).toList();
+                  }
+
+                  if (anoSelecionado != '' && mesSelecionado != '') {
+                    financialBoxs = financialBoxs.where((financialBox) {
+                      final dataItemCaixaController =
+                      financialBox.dataItemCaixaController!.toLowerCase();
+                      return dataItemCaixaController.contains('${mesSelecionado!}/${anoSelecionado!}');
                     }).toList();
                   }
 
