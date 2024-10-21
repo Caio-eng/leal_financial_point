@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:leal_apontar/components/show_custom_alert_dialog.dart';
-import 'package:leal_apontar/cotacao_screen.dart';
+import 'package:leal_apontar/screen/cotacao_screen/cotacao_screen.dart';
+import 'package:leal_apontar/screen/fiancial_screen/financial_box_screen.dart';
 
 import '../screen/home_screen.dart';
 import '../screen/login_screen/login_screen.dart';
@@ -87,13 +88,23 @@ class _MenuState extends State<Menu> {
             },
           ),
           perfilExistente == true ? ListTile(
-            leading: const Icon(Icons.monetization_on),
+            leading: const Icon(Icons.attach_money),
             title: const Text('Cotação'),
             onTap: () {
               Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) => CotacaoScreen(user: widget.user)));
+            },
+          ) : Container(),
+          perfilExistente == true ? ListTile(
+            leading: const Icon(Icons.monetization_on),
+            title: const Text('Caixa'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FinancialBoxScreen(user: widget.user)));
             },
           ) : Container(),
           ListTile(

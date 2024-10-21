@@ -3,8 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:leal_apontar/screen/home_screen.dart';
 import 'package:leal_apontar/screen/login_screen/login_screen.dart';
-
-import 'cotacao_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {

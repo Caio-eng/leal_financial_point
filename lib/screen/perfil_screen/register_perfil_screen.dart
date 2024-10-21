@@ -205,7 +205,9 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: Text(isUpdating ? 'Atualizar Perfil' : 'Concluir Perfil'),
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.teal,
       ),
       body: SingleChildScrollView( // Adiciona scroll

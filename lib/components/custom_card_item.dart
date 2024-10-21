@@ -4,6 +4,7 @@ class CustomCardItem extends StatelessWidget {
   const CustomCardItem({
     super.key,
     this.imageUrl,
+    this.icon,
     required this.title,
     required this.subtitle,
     required this.owner,
@@ -11,6 +12,7 @@ class CustomCardItem extends StatelessWidget {
   });
 
   final String? imageUrl;
+  final IconData? icon; // Agora você pode passar um ícone como alternativa
   final String title;
   final String subtitle;
   final String owner;
@@ -29,26 +31,7 @@ class CustomCardItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: imageUrl != null
-                  ? Image.network(
-                imageUrl!,
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-              )
-                  : Container(
-                height: 100,
-                width: 100,
-                color: Colors.grey,
-                child: const Icon(
-                  Icons.image,
-                  size: 50,
-                  color: Colors.white,
-                ),
-              ),
-            ),
+            _buildImageOrIcon(), // Função para construir a imagem ou ícone
             const SizedBox(width: 15),
             Expanded(
               child: Column(
@@ -65,7 +48,7 @@ class CustomCardItem extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Verifica se onOptionSelected é nulo antes de exibir o PopupMenuButton
+                      // Verifica se onOptionSelected não é nulo antes de exibir o PopupMenuButton
                       if (onOptionSelected != null)
                         PopupMenuButton<String>(
                           onSelected: onOptionSelected,
@@ -77,6 +60,7 @@ class CustomCardItem extends StatelessWidget {
                               );
                             }).toList();
                           },
+                          icon: const Icon(Icons.more_vert), // Adicionando ícone de menu estilizado
                         ),
                     ],
                   ),
@@ -101,6 +85,55 @@ class CustomCardItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  // Função para construir a imagem ou o ícone dependendo dos parâmetros fornecidos
+  Widget _buildImageOrIcon() {
+    if (imageUrl != null) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Image.network(
+          imageUrl!,
+          height: 100,
+          width: 100,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => _buildPlaceholderIcon(),
+        ),
+      );
+    } else if (icon != null) {
+      return Container(
+        height: 100,
+        width: 100,
+        decoration: BoxDecoration(
+          color: Colors.teal[50],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          size: 60,
+          color: Colors.teal,
+        ),
+      );
+    } else {
+      return _buildPlaceholderIcon();
+    }
+  }
+
+  // Função de ícone padrão caso a imagem falhe ou nenhum ícone seja fornecido
+  Widget _buildPlaceholderIcon() {
+    return Container(
+      height: 100,
+      width: 100,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: const Icon(
+        Icons.image_not_supported,
+        size: 50,
+        color: Colors.white,
       ),
     );
   }

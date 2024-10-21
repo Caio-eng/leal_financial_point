@@ -18,7 +18,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _comfirmaSenhaController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
 
   bool _senhaVisivel = true;
@@ -48,7 +48,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(
                       width: 80,
                       height: 80,
-                      child: Icon(Icons.person_add_alt_1, size: 80,),
+                      child: Icon(
+                        Icons.person_add_alt_1,
+                        size: 80,
+                      ),
                     ),
                     const SizedBox(height: 50),
                     TextFormField(
@@ -145,18 +148,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         // Exibe o CircularProgressIndicator ou o botão de cadastrar
                         _isLoading
                             ? const CircularProgressIndicator(
-                          color: Colors.blue,
-                        )
+                                color: Colors.blue,
+                              )
                             : ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              _registrarUsuario();
-                            }
-                          },
-                          child: const Text(
-                            "Cadastrar",
-                          ),
-                        ),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _registrarUsuario();
+                                  }
+                                },
+                                child: const Text(
+                                  "Cadastrar",
+                                ),
+                              ),
                       ],
                     ),
                   ],

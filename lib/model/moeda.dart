@@ -3,7 +3,8 @@ class Moeda {
   final String ask;    // Preço de venda
   final String code;   // Código da moeda
   final String codein; // Código da moeda em
-  final String name;   // Nome da moeda
+  final String name;
+  final String low;
 
   Moeda({
     required this.bid,
@@ -11,6 +12,7 @@ class Moeda {
     required this.code,
     required this.codein,
     required this.name,
+    required this.low
   });
 
   factory Moeda.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,7 @@ class Moeda {
       code: json['code'],
       codein: json['codein'],
       name: json['name'],
+      low: json['low']
     );
   }
 }
