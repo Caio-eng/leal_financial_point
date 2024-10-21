@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,8 @@ import 'package:leal_apontar/components/menu.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:leal_apontar/screen/fiancial_screen/financial_box_register_screen.dart';
 import 'package:leal_apontar/services/financial_box_service.dart';
+import 'package:leal_apontar/services/financial_report_service.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import '../../components/custom_card_item.dart';
 import '../../components/custom_snack_bar.dart';
@@ -211,11 +215,14 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                         child: CustomCardItem(
                           title:
                           '${financialBox.tipoCaixaSelecionado} ${financialBox.dataItemCaixaController}',
-                          subtitle: '${financialBox.descricaoItemCaixaController}',
+                          subtitle: 'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}',
                           icon: Icons.attach_money,
                           owner: 'Valor: ${financialBox.valorItemCaixaController}',
                           onOptionSelected: (option) {
                             switch (option) {
+                              case 'Download':
+                                onDownloadPressed(financialBox);
+                                break;
                               case 'Editar':
                                 Navigator.push(
                                   context,
@@ -308,4 +315,10 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       customSnackBar(context, 'Lançamento de caixa excluído com sucesso!');
     });
   }
+  void onDownloadPressed(FinancialBox financialBox) async {
+    FinancialReportService().generateProofFinancialBox(financialBox);
+    customSnackBar(context, 'Comprovante gerado com sucesso!');
+  }
+
+
 }
