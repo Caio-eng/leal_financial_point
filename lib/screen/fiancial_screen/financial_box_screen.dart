@@ -241,58 +241,57 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
               },
             ),
           ),
-
-          // Card para exibir o saldo atual
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: Card(
-              color: Colors.teal[100],
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Saldo Atual:',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      'R\$ ${saldoAtual.toStringAsFixed(2)}', // Exibindo o saldo atual calculado
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.teal,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => FinancialBoxRegisterScreen(
-                user: widget.user,
-              ),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(30),
+              color: Colors.teal, // Cor similar ao FloatingActionButton
             ),
-          );
-          saldoCalculado = false;
-        },
-        child: const Icon(Icons.add),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Saldo Atual:',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  'R\$ ${saldoAtual.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FinancialBoxRegisterScreen(
+                    user: widget.user,
+                  ),
+                ),
+              );
+              saldoCalculado = false;
+            },
+            child: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }
