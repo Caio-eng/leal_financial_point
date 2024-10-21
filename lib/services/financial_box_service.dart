@@ -30,15 +30,6 @@ class FinancialBoxService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> findMyFinancialBoxAno(String userId) {
-    return FirebaseFirestore.instance
-        .collection('my_financial_box')
-        .doc(userId)
-        .collection('financial_box')
-        .where('tipoCaixaSelecionado', isEqualTo: 'Saída')
-        .snapshots();
-  }
-
   void saveFinancialBox(String idFinancialBox, String uid, FinancialBox newFinancialBox) async {
     await FirebaseFirestore.instance
         .collection('financial_box')
