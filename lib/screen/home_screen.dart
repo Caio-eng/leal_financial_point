@@ -54,25 +54,24 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Aumentando o tamanho da imagem e centralizando
                 Container(
-                  width: 200, // Aumente o tamanho da imagem
+                  width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle, // Torna a imagem circular
+                    shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2), // Sombra leve
+                        color: Colors.black.withOpacity(0.2),
                         blurRadius: 10,
                         spreadRadius: 5,
-                        offset: Offset(0, 5),
+                        offset: const Offset(0, 5),
                       ),
                     ],
                   ),
                   child: ClipOval(
                     child: Image.asset(
                       "imagens/logo.png",
-                      fit: BoxFit.cover, // Garante que a imagem se ajuste bem ao container
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
@@ -82,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Colors.teal, // Altere para a cor desejada
+                    color: Colors.teal,
                   ),
                   textAlign: TextAlign.center,
                 ),

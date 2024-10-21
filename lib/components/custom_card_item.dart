@@ -53,14 +53,17 @@ class CustomCardItem extends StatelessWidget {
                         PopupMenuButton<String>(
                           onSelected: onOptionSelected,
                           itemBuilder: (BuildContext context) {
-                            return {'Editar', 'Excluir'}.map((String choice) {
+                            // Gera a lista de opções, adicionando "Download" se onDownloadPressed não for nulo
+                            final options = <String>[];
+                            options.addAll(['Download', 'Editar', 'Excluir']);
+                            return options.map((String choice) {
                               return PopupMenuItem<String>(
                                 value: choice,
                                 child: Text(choice),
                               );
                             }).toList();
                           },
-                          icon: const Icon(Icons.more_vert), // Adicionando ícone de menu estilizado
+                          icon: const Icon(Icons.more_vert), // Ícone de menu estilizado
                         ),
                     ],
                   ),
@@ -104,8 +107,8 @@ class CustomCardItem extends StatelessWidget {
       );
     } else if (icon != null) {
       return Container(
-        height: 100,
-        width: 100,
+        height: 80,
+        width: 80,
         decoration: BoxDecoration(
           color: Colors.teal[50],
           borderRadius: BorderRadius.circular(10),
@@ -124,8 +127,8 @@ class CustomCardItem extends StatelessWidget {
   // Função de ícone padrão caso a imagem falhe ou nenhum ícone seja fornecido
   Widget _buildPlaceholderIcon() {
     return Container(
-      height: 100,
-      width: 100,
+      height: 80,
+      width: 80,
       decoration: BoxDecoration(
         color: Colors.grey,
         borderRadius: BorderRadius.circular(10),
