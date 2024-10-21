@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:leal_apontar/components/currency_money_text_input_formatter.dart';
 import 'package:leal_apontar/components/currency_text_input_formatter.dart';
 import 'package:leal_apontar/components/custom_snack_bar.dart';
 import 'package:leal_apontar/components/menu.dart';
@@ -22,11 +23,21 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
   late Future<Moeda> cotacaoFuture;
   final TextEditingController _realController = TextEditingController();
   double? resultadoDolar;
+  String? tipoMoedaSelecionado = 'USD-BRL';
 
   @override
   void initState() {
     super.initState();
-    cotacaoFuture = CotacaoService.buscaCotacaoMoedaRecente();
+    cotacaoFuture = CotacaoService.buscaCotacaoMoedaRecente(tipoMoedaSelecionado!);
+  }
+
+  List<DropdownMenuItem<String>> getMoedaOptions() {
+    return const [
+      DropdownMenuItem(value: 'USD-BRL', child: Text('Dólar - Real')),
+      DropdownMenuItem(value: 'BRL-USD', child: Text('Real - Dólar')),
+      DropdownMenuItem(value: 'EUR-BRL', child: Text('Euro - Real')),
+      DropdownMenuItem(value: 'BRL-EUR', child: Text('Real - Euro')),
+    ];
   }
 
   @override
@@ -61,13 +72,16 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Row(
+                      Row(
                         children: [
-                          Icon(Icons.attach_money, size: 30, color: Colors.teal),
-                          SizedBox(width: 10),
+                          const Icon(Icons.attach_money, size: 30, color: Colors.teal),
+                          const SizedBox(width: 10),
                           Text(
-                            'Real / Dólar',
-                            style: TextStyle(
+                            tipoMoedaSelecionado == 'USD-BRL' ? 'Dólar / Real'
+                                : tipoMoedaSelecionado == 'BRL-USD' ? 'Real / Dólar'
+                                : tipoMoedaSelecionado == 'EUR-BRL' ? 'Euro / Real'
+                                : 'Real / Euro',
+                            style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.teal,
@@ -76,27 +90,53 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
+                      DropdownButtonFormField<String>(
+                        value: tipoMoedaSelecionado,
+                        items: getMoedaOptions(),
+                        onChanged: (value) {
+                          setState(() {
+                            tipoMoedaSelecionado = value;
+                            cotacaoFuture = CotacaoService.buscaCotacaoMoedaRecente(tipoMoedaSelecionado!);
+                          });
+                        },
+                        decoration: CustomInputDecoration.build(
+                          labelText: 'Código de Conversão',
+                        ),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Por favor, selecione o tipo de conversão';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Código de Conversão:',
+                              Text(
+                                tipoMoedaSelecionado == 'USD-BRL' ? 'Dólar'
+                                    : tipoMoedaSelecionado == 'BRL-USD' ? 'Real'
+                                    : tipoMoedaSelecionado == 'EUR-BRL' ? 'Euro'
+                                    : 'Real',
                                 style: TextStyle(fontSize: 18, color: Colors.black54),
                               ),
                               Text(
-                                '${cotacao.codein} / ${cotacao.code}',
+                                '${tipoMoedaSelecionado == 'USD-BRL' ? '\$'
+                                    : tipoMoedaSelecionado == 'BRL-USD' ? 'R\$'
+                                    : tipoMoedaSelecionado == 'EUR-BRL' ? '€'
+                                    : 'R\$'} ${double.parse(cotacao.bid).toStringAsFixed(2)}',
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: Colors.green,
                                 ),
                               ),
                             ],
                           ),
-                          const Icon(Icons.compare_arrows, size: 24, color: Colors.black54),
+                          const Icon(Icons.attach_money, size: 24, color: Colors.green),
                         ],
                       ),
                       const SizedBox(height: 20),
@@ -107,14 +147,20 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
-                          CurrencyTextInputFormatter()
+                          CurrencyMoneyTextInputFormatter(tipoMoeda: tipoMoedaSelecionado),
                         ],
                         decoration: CustomInputDecoration.build(
-                          labelText: 'Real',
-                          hintText: 'Insira um valor em real',
+                          labelText: tipoMoedaSelecionado == 'USD-BRL' ? 'Dólar'
+                              : tipoMoedaSelecionado == 'BRL-USD' ? 'Real'
+                              : tipoMoedaSelecionado == 'EUR-BRL' ? 'Euro'
+                              : 'Real',
+                          hintText: tipoMoedaSelecionado == 'USD-BRL' ?'Insira um valor em dólares'
+                                  : tipoMoedaSelecionado == 'BRL-USD' ? 'Insira um valor em Reais'
+                                  : tipoMoedaSelecionado == 'EUR-BRL' ? 'Insira um valor em Euros'
+                                  : 'Insira um valor em Reais',
                           suffixIcon: GestureDetector(
                               onTap: () {
-                                cacularDolar(cotacao.low);
+                                cacularDolar(cotacao.bid);
                               },
                               child: const Icon(Icons.search)),
                         ),
@@ -128,85 +174,16 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
                       const SizedBox(height: 20),
                       if (resultadoDolar != null)
                         Text(
-                          '${_realController.text} reais equivalem à \$${resultadoDolar!.toStringAsFixed(2)} dólares',
+                          tipoMoedaSelecionado == 'USD-BRL' ? '${_realController.text} Dólares equivalem à R\$ ${resultadoDolar!.toStringAsFixed(2)} reais'
+                              : tipoMoedaSelecionado == 'BRL-USD' ? '${_realController.text} Reais equivalem à \$${resultadoDolar!.toStringAsFixed(2)} dólares'
+                              : tipoMoedaSelecionado == 'EUR-BRL' ? '${_realController.text} Euros equivalem à R\$ ${resultadoDolar!.toStringAsFixed(2)} reais'
+                              : '${_realController.text} Reais equivalem à \$${resultadoDolar!.toStringAsFixed(2)} euros',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blueAccent,
+                            color: Colors.teal,
                           ),
                         ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Dólar Atual:',
-                                style: TextStyle(fontSize: 18, color: Colors.black54),
-                              ),
-                              Text(
-                                'R\$ ${(double.parse(cotacao.low) + 0.01).toStringAsFixed(2)}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.teal,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Icon(Icons.monetization_on, size: 24, color: Colors.teal),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Licitação de Compra:',
-                                style: TextStyle(fontSize: 18, color: Colors.black54),
-                              ),
-                              Text(
-                                'R\$ ${cotacao.bid}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Icon(Icons.attach_money, size: 24, color: Colors.green),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                'Licitação de Venda:',
-                                style: TextStyle(fontSize: 18, color: Colors.black54),
-                              ),
-                              Text(
-                                'R\$ ${cotacao.ask}',
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.redAccent,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const Icon(Icons.money_off, size: 24, color: Colors.redAccent),
-                        ],
-                      ),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -227,8 +204,17 @@ class _CotacaoScreenState extends State<CotacaoScreen> {
           .replaceAll(',', '.');
 
       double valorReal = double.parse(realValue);
-      double licitacaoModificada = double.parse(licitacaoDeCompra) + 0.01;
-      double precoDolar = valorReal / licitacaoModificada;
+      double precoDolar = 0.0;
+
+      if (tipoMoedaSelecionado == 'USD-BRL') {
+        precoDolar = valorReal / double.parse(licitacaoDeCompra);
+      } else if (tipoMoedaSelecionado == 'BRL-USD') {
+        precoDolar = valorReal * double.parse(licitacaoDeCompra);
+      } else if (tipoMoedaSelecionado == 'EUR-BRL') {
+        precoDolar = valorReal * double.parse(licitacaoDeCompra);
+      } else {
+        precoDolar = valorReal * double.parse(licitacaoDeCompra);
+      }
 
       setState(() {
         resultadoDolar = precoDolar;
