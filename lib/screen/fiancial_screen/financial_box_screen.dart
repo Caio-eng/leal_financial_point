@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:leal_apontar/components/menu.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:leal_apontar/screen/fiancial_screen/financial_box_register_screen.dart';
@@ -86,144 +87,104 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
-                hintText: 'Digite o que deseja pesquisar',
-                labelText: 'Pesquisar',
-                suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    setState(() {
-                      searchQuery = _searchController.text.trim().toLowerCase();
-                      saldoCalculado = false; // Reseta cálculo de saldo ao pesquisar
-                    });
-                  },
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(32),
-                ),
-              ),
-              onChanged: (value) {
-                setState(() {
-                  searchQuery = value.trim().toLowerCase();
-                  saldoCalculado = false; // Reseta cálculo de saldo ao digitar
-                });
-              },
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: DropdownButtonFormField<String>(
-              value: anoSelecionado,
-              items: getAnoOptions(),
-              onChanged: (value) {
-                setState(() {
-                  anoSelecionado = value;
-                  saldoCalculado = false;
-                  mesSelecionado = '';
-                });
-              },
-              decoration: CustomInputDecoration.build(
-                labelText: 'Filtro pelo Ano',
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
+            child: ExpansionTile(
+              title: const Text('Filtros de Pesquisa'),
+              leading: const Icon(Icons.filter_list),
               children: [
-                Expanded(
-                  flex: 3,
-                  child: DropdownButtonFormField<String>(
-                    value: mesSelecionado,
-                    items: getMesOptions(),
-                    onChanged: (value) {
-                      setState(() {
-                        mesSelecionado = value;
-                        saldoCalculado = false; // Reseta cálculo de saldo ao mudar mês
-                      });
-                    },
-                    decoration: CustomInputDecoration.build(
-                      labelText: 'Filtro pelo Mês',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Tooltip(
-                    message: 'Gerar relatório de lançamentos',
-                    child: SizedBox(
-                      width: 48.0, // Largura desejada
-                      height: 48.0,
-                      child: IconButton(
-                          onPressed: (){
-                            FinancialReportService().generateFinancialReport(financialBoxs, double.parse(saldoAtual.toStringAsFixed(2)));
-                            customSnackBar(context, 'Relatório financeiro gerado com sucesso!');
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: anoSelecionado,
+                          items: getAnoOptions(),
+                          onChanged: (value) {
+                            setState(() {
+                              anoSelecionado = value;
+                              saldoCalculado = false;
+                              mesSelecionado = '';
+                            });
                           },
-                          icon: const Icon(Icons.description, color: Colors.teal,),
+                          decoration: CustomInputDecoration.build(
+                            labelText: 'Filtro pelo Ano',
+                          ),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          value: mesSelecionado,
+                          items: getMesOptions(),
+                          onChanged: (value) {
+                            setState(() {
+                              mesSelecionado = value;
+                              saldoCalculado = false; // Reseta cálculo de saldo ao mudar mês
+                            });
+                          },
+                          decoration: CustomInputDecoration.build(
+                            labelText: 'Filtro pelo Mês',
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                )
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Radio<String>(
-                      value: 'todos',
-                      groupValue: filtro,
-                      onChanged: (value) {
-                        setState(() {
-                          filtro = value!;
-                          saldoAtual = 0;
-                          saldoCalculado = false; // Reseta cálculo de saldo ao mudar filtro
-                        });
-                      },
-                    ),
-                    const Text('Lançamentos'),
-                  ],
                 ),
-                Row(
-                  children: [
-                    Radio<String>(
-                      value: 'entradas',
-                      groupValue: filtro,
-                      onChanged: (value) {
-                        setState(() {
-                          filtro = value!;
-                          saldoAtual = 0;
-                          saldoCalculado = false;
-                        });
-                      },
-                    ),
-                    const Text('Entradas'),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio<String>(
-                      value: 'saidas',
-                      groupValue: filtro,
-                      onChanged: (value) {
-                        setState(() {
-                          filtro = value!;
-                          saldoAtual = 0;
-                          saldoCalculado = false;
-                        });
-                      },
-                    ),
-                    const Text('Saídas'),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'todos',
+                            groupValue: filtro,
+                            onChanged: (value) {
+                              setState(() {
+                                filtro = value!;
+                                saldoAtual = 0;
+                                saldoCalculado = false; // Reseta cálculo de saldo ao mudar filtro
+                              });
+                            },
+                          ),
+                          const Text('Lançamentos'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'entradas',
+                            groupValue: filtro,
+                            onChanged: (value) {
+                              setState(() {
+                                filtro = value!;
+                                saldoAtual = 0;
+                                saldoCalculado = false;
+                              });
+                            },
+                          ),
+                          const Text('Entradas'),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Radio<String>(
+                            value: 'saidas',
+                            groupValue: filtro,
+                            onChanged: (value) {
+                              setState(() {
+                                filtro = value!;
+                                saldoAtual = 0;
+                                saldoCalculado = false;
+                              });
+                            },
+                          ),
+                          const Text('Saídas'),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -400,20 +361,42 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
               ],
             ),
           ),
-          FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => FinancialBoxRegisterScreen(
-                    user: widget.user,
-                  ),
-                ),
-              );
-              saldoCalculado = false;
-            },
-            child: const Icon(Icons.add),
-          ),
+          SpeedDial(
+            // Ícone principal do botão
+            icon: Icons.add,
+            activeIcon: Icons.close,
+            backgroundColor: Colors.teal,
+            foregroundColor: Colors.white,
+
+            // Lista de botões secundários
+            children: [
+              SpeedDialChild(
+                child: const Icon(Icons.attach_money),
+                label: 'Registrar Caixa',
+                backgroundColor: Colors.teal,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => FinancialBoxRegisterScreen(
+                        user: widget.user,
+                      ),
+                    ),
+                  );
+                  saldoCalculado = false;
+                },
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.description),
+                label: 'Gerar relatório de lançamentos',
+                backgroundColor: Colors.teal,
+                onTap: () {
+                 FinancialReportService().generateFinancialReport(financialBoxs, saldoAtual);
+                 customSnackBar(context, 'Relatório financeiro gerado com sucesso!');
+                },
+              ),
+            ],
+          )
         ],
       ),
     );
