@@ -8,66 +8,71 @@ class FinancialReportService {
 
   void generateProofFinancialBox(FinancialBox financialBox) async {
     final pdf = pw.Document();
+
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat.a4.copyWith(marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20),
         build: (pw.Context context) {
-          return pw.Container(
-            padding: const pw.EdgeInsets.all(20),
-            decoration: pw.BoxDecoration(
-              border: pw.Border.all(color: PdfColors.grey),
-              borderRadius: pw.BorderRadius.circular(10),
-            ),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  'Comprovante de Lançamento do Caixa',
-                  style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
-                ),
-                pw.Divider(),
-                pw.SizedBox(height: 10),
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo do comprovante
+            children: [
+              // Título do Comprovante
+              pw.Text(
+                'Comprovante de Lançamento do Caixa',
+                style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+              ),
+              pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+              pw.SizedBox(height: 20),
 
-                // Detalhes do lançamento
-                pw.Text(
-                  'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
-                  style: const pw.TextStyle(fontSize: 18),
+              // Detalhes do lançamento
+              pw.Container(
+                padding: const pw.EdgeInsets.all(20),
+                decoration: pw.BoxDecoration(
+                  color: PdfColors.blue50,
+                  border: pw.Border.all(color: PdfColors.blueGrey700),
+                  borderRadius: pw.BorderRadius.circular(10),
                 ),
-                pw.Text(
-                  'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
-                  style: const pw.TextStyle(fontSize: 16),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.Text(
+                      'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
+                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                    ),
+                    pw.Text(
+                      'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
+                      style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
+                    ),
+                    pw.SizedBox(height: 10),
+                    pw.Text(
+                      'Descrição: ${financialBox.descricaoItemCaixaController}',
+                      style: const pw.TextStyle(fontSize: 16),
+                    ),
+                    pw.Text(
+                      'Data: ${financialBox.dataItemCaixaController}',
+                      style: const pw.TextStyle(fontSize: 18),
+                    ),
+                    pw.SizedBox(height: 20),
+                    pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                    pw.SizedBox(height: 10),
+                    pw.Text(
+                      'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
+                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.green700),
+                    ),
+                  ],
                 ),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  'Descrição: ${financialBox.descricaoItemCaixaController}',
-                  style: const pw.TextStyle(fontSize: 16),
-                ),
-                pw.Text(
-                  'Data: ${financialBox.dataItemCaixaController}',
-                  style: const pw.TextStyle(fontSize: 18),
-                ),
-                pw.SizedBox(height: 20),
-                pw.Divider(),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                  'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
-                  style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
-                ),
-                pw.SizedBox(height: 20),
-                pw.Divider(),
-                pw.SizedBox(height: 20),
+              ),
+              pw.SizedBox(height: 20),
 
-                // Rodapé
-                pw.Align(
-                  alignment: pw.Alignment.centerRight,
-                  child: pw.Text(
-                    'A Leal Financial Point agradece por utilizar nosso serviço!',
-                    style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic),
-                  ),
+              // Rodapé
+              pw.Align(
+                alignment: pw.Alignment.centerRight,
+                child: pw.Text(
+                  'A Leal Financial Point agradece por utilizar nosso serviço!',
+                  style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic, color: PdfColors.blueGrey400),
                 ),
-              ],
-            ),
+              ),
+            ],
           );
         },
       ),
@@ -79,7 +84,6 @@ class FinancialReportService {
     html.AnchorElement(href: url)
       ..setAttribute('download', 'comprovante_financeiro.pdf')
       ..click();
-
     html.Url.revokeObjectUrl(url);
   }
 
@@ -98,64 +102,58 @@ class FinancialReportService {
         pageFormat: PdfPageFormat.a4.copyWith(marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20),
         build: (pw.Context context) {
           return [
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.Text(
-                  'Relatório Financeiro',
-                  style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
-                ),
-                pw.Divider(),
-                pw.SizedBox(height: 20),
-              ],
+            pw.Center(
+              child: pw.Text(
+                'Relatório Financeiro',
+                style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+              ),
             ),
+            pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+            pw.SizedBox(height: 20),
 
             // Lista todos os FinancialBox com quebra automática de página
             pw.ListView.builder(
               itemCount: financialBoxes.length,
               itemBuilder: (context, index) {
                 final financialBox = financialBoxes[index];
-                return pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Container(
-                      padding: const pw.EdgeInsets.all(10),
-                      decoration: pw.BoxDecoration(
-                        border: pw.Border.all(color: PdfColors.grey),
-                        borderRadius: pw.BorderRadius.circular(5),
-                      ),
-                      child: pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [
-                          pw.Text(
-                            'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
-                            style: const pw.TextStyle(fontSize: 18),
-                          ),
-                          pw.Text(
-                            'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
-                            style: const pw.TextStyle(fontSize: 16),
-                          ),
-                          pw.SizedBox(height: 10),
-                          pw.Text(
-                            'Descrição: ${financialBox.descricaoItemCaixaController}',
-                            style: const pw.TextStyle(fontSize: 16),
-                          ),
-                          pw.Text(
-                            'Data: ${financialBox.dataItemCaixaController}',
-                            style: const pw.TextStyle(fontSize: 18),
-                          ),
-                          pw.SizedBox(height: 10),
-                          pw.Text(
-                            'Valor: R\$ ${financialBox.valorItemCaixaController}',
-                            style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                return pw.Center(
+                  child: pw.Container(
+                    width: double.infinity,
+                    padding: const pw.EdgeInsets.all(12),
+                    margin: const pw.EdgeInsets.symmetric(vertical: 10),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.blue50,
+                      border: pw.Border.all(color: PdfColors.blueGrey700),
+                      borderRadius: pw.BorderRadius.circular(10),
                     ),
-                    pw.SizedBox(height: 20),
-                    pw.Divider(),
-                    pw.SizedBox(height: 20),
-                  ],
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo do card
+                      children: [
+                        pw.Text(
+                          'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
+                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.Text(
+                          'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
+                          style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Descrição: ${financialBox.descricaoItemCaixaController}',
+                          style: const pw.TextStyle(fontSize: 16),
+                        ),
+                        pw.Text(
+                          'Data: ${financialBox.dataItemCaixaController}',
+                          style: const pw.TextStyle(fontSize: 18),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Valor: ${financialBox.valorItemCaixaController}',
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.green700),
+                        ),
+                      ],
+                    ),
+                  ),
                 );
               },
             ),
@@ -168,50 +166,56 @@ class FinancialReportService {
       pw.Page(
         pageFormat: PdfPageFormat.a4.copyWith(marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20),
         build: (pw.Context context) {
-          return pw.Container(
-            padding: const pw.EdgeInsets.all(20),
-            decoration: pw.BoxDecoration(
-              border: pw.Border.all(color: PdfColors.grey),
-              borderRadius: pw.BorderRadius.circular(10),
-            ),
-            child: pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  'Resumo Financeiro',
-                  style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
-                ),
-                pw.Divider(),
-                pw.SizedBox(height: 10),
-
-                // Detalhes do saldo
-                pw.Text(
-                  'Saldo Atual',
-                  style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
-                ),
-                pw.Text(
-                  'Com base nos lançamentos realizados, o saldo atual é:',
-                  style: const pw.TextStyle(fontSize: 16),
-                ),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  'R\$ ${saldoAtual.toStringAsFixed(2)}',
-                  style: pw.TextStyle(fontSize: 36, fontWeight: pw.FontWeight.bold, color: saldoAtual > 0 ? PdfColors.green : PdfColors.red),
-                ),
-                pw.SizedBox(height: 20),
-                pw.Divider(),
-                pw.SizedBox(height: 10),
-
-                // Rodapé
-                pw.Align(
-                  alignment: pw.Alignment.centerRight,
-                  child: pw.Text(
-                    'A Leal Financial Point agradece por utilizar nosso serviço!',
-                    style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic),
+          return pw.Center(
+            child: pw.Container(
+              padding: const pw.EdgeInsets.all(20),
+              decoration: pw.BoxDecoration(
+                border: pw.Border.all(color: PdfColors.blueGrey700),
+                borderRadius: pw.BorderRadius.circular(12),
+              ),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo
+                children: [
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'Resumo Financeiro',
+                    style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
                   ),
-                ),
-              ],
+                  pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                  pw.SizedBox(height: 10),
+
+                  // Detalhes do saldo
+                  pw.Text(
+                    'Saldo Atual',
+                    style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+                  ),
+                  pw.Text(
+                    'Com base nos lançamentos realizados, o saldo atual é:',
+                    style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey600),
+                  ),
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'R\$ ${saldoAtual.toStringAsFixed(2)}',
+                    style: pw.TextStyle(
+                      fontSize: 36,
+                      fontWeight: pw.FontWeight.bold,
+                      color: saldoAtual > 0 ? PdfColors.green700 : PdfColors.red700,
+                    ),
+                  ),
+                  pw.SizedBox(height: 20),
+                  pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                  pw.SizedBox(height: 10),
+
+                  // Rodapé
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      'A Leal Financial Point agradece por utilizar nosso serviço!',
+                      style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic, color: PdfColors.blueGrey400),
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
         },
