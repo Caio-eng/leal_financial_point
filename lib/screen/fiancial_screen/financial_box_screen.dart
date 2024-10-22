@@ -162,6 +162,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       child: IconButton(
                           onPressed: (){
                             FinancialReportService().generateFinancialReport(financialBoxs, double.parse(saldoAtual.toStringAsFixed(2)));
+                            customSnackBar(context, 'Relatório financeiro gerado com sucesso!');
                           },
                           icon: const Icon(Icons.description, color: Colors.teal,),
                       ),
@@ -335,7 +336,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                           owner: 'Valor: ${financialBox.valorItemCaixaController}',
                           onOptionSelected: (option) {
                             switch (option) {
-                              case 'Download':
+                              case 'Comprovante':
                                 onDownloadPressed(financialBox);
                                 break;
                               case 'Editar':

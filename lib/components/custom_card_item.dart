@@ -55,7 +55,7 @@ class CustomCardItem extends StatelessWidget {
                           itemBuilder: (BuildContext context) {
                             // Gera a lista de opções, adicionando "Download" se onDownloadPressed não for nulo
                             final options = <String>[];
-                            options.addAll(['Download', 'Editar', 'Excluir']);
+                            options.addAll(['Comprovante', 'Editar', 'Excluir']);
                             return options.map((String choice) {
                               return PopupMenuItem<String>(
                                 value: choice,
