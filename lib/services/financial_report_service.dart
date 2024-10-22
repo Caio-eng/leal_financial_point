@@ -2,8 +2,7 @@ import 'package:leal_apontar/model/financial_box.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'dart:html' as html;
-
-import 'package:pdf/widgets.dart';
+import 'package:intl/intl.dart';
 
 class FinancialReportService {
 
@@ -86,6 +85,13 @@ class FinancialReportService {
 
   void generateFinancialReport(List<FinancialBox> financialBoxes, double saldoAtual) async {
     final pdf = pw.Document();
+    final dateFormat = DateFormat('dd/MM/yyyy');
+
+    financialBoxes.sort((a, b) {
+      final dateA = dateFormat.parse(a.dataItemCaixaController.toString());
+      final dateB = dateFormat.parse(b.dataItemCaixaController.toString());
+      return dateA.compareTo(dateB);
+    });
 
     pdf.addPage(
       pw.MultiPage(
