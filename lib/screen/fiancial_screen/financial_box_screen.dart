@@ -93,6 +93,37 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.fromLTRB(32, 16, 32, 16),
+                      hintText: 'Digite o que deseja pesquisar',
+                      labelText: 'Pesquisar',
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.search),
+                        onPressed: () {
+                          setState(() {
+                            searchQuery = _searchController.text.trim().toLowerCase();
+                            saldoCalculado = false; // Reseta cálculo de saldo ao pesquisar
+                          });
+                        },
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value.trim().toLowerCase();
+                        saldoCalculado = false; // Reseta cálculo de saldo ao digitar
+                      });
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
                   child: DropdownButtonFormField<String>(
                     value: anoSelecionado,
                     items: getAnoOptions(),
