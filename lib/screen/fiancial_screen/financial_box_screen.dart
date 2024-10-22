@@ -31,6 +31,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   final TextEditingController _searchController = TextEditingController();
   String? anoSelecionado = '';
   String? mesSelecionado = '';
+  late List<FinancialBox> financialBoxs;
 
   @override
   void initState() {
@@ -116,33 +117,34 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(16),
+            child: DropdownButtonFormField<String>(
+              value: anoSelecionado,
+              items: getAnoOptions(),
+              onChanged: (value) {
+                setState(() {
+                  anoSelecionado = value;
+                  saldoCalculado = false;
+                  mesSelecionado = '';
+                });
+              },
+              decoration: CustomInputDecoration.build(
+                labelText: 'Filtro pelo Ano',
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Expanded(
-                  child: DropdownButtonFormField<String>(
-                    value: anoSelecionado,
-                    items: getAnoOptions(),
-                    onChanged: (value) {
-                      setState(() {
-                        anoSelecionado = value;
-                        saldoCalculado = false;
-                        mesSelecionado = '';
-                      });
-                    },
-                    decoration: CustomInputDecoration.build(
-                      labelText: 'Filtro pelo Ano',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16), // Espaçamento horizontal
-                Expanded(
+                  flex: 3,
                   child: DropdownButtonFormField<String>(
                     value: mesSelecionado,
                     items: getMesOptions(),
                     onChanged: (value) {
                       setState(() {
                         mesSelecionado = value;
-                        saldoCalculado = false; // Reseta cálculo de saldo ao mudar mes
+                        saldoCalculado = false; // Reseta cálculo de saldo ao mudar mês
                       });
                     },
                     decoration: CustomInputDecoration.build(
@@ -150,6 +152,22 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Tooltip(
+                    message: 'Gerar relatório de lançamentos',
+                    child: SizedBox(
+                      width: 48.0, // Largura desejada
+                      height: 48.0,
+                      child: IconButton(
+                          onPressed: (){
+                            FinancialReportService().generateFinancialReport(financialBoxs, double.parse(saldoAtual.toStringAsFixed(2)));
+                          },
+                          icon: const Icon(Icons.description, color: Colors.teal,),
+                      ),
+                    ),
+                  ),
+                )
               ],
             ),
           ),
@@ -229,7 +247,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                         'Olá ${widget.user.displayName}, nenhum lançamento de caixa encontrado!'),
                   );
                 } else {
-                  List<FinancialBox> financialBoxs = snapshot.data!.docs.map((doc) {
+                  financialBoxs = snapshot.data!.docs.map((doc) {
                     final data = doc.data() as Map<String, dynamic>;
                     return FinancialBox.fromMap(data);
                   }).toList();
@@ -259,6 +277,18 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       final dataItemCaixaController =
                       financialBox.dataItemCaixaController!.toLowerCase();
                       return dataItemCaixaController.contains('${mesSelecionado!}/${anoSelecionado!}');
+                    }).toList();
+                  } else if (anoSelecionado != '') {
+                    financialBoxs = financialBoxs.where((financialBox) {
+                      final dataItemCaixaController =
+                      financialBox.dataItemCaixaController!.toLowerCase();
+                      return dataItemCaixaController.contains(anoSelecionado!);
+                    }).toList();
+                  } else if (mesSelecionado != '') {
+                    financialBoxs = financialBoxs.where((financialBox) {
+                      final dataItemCaixaController =
+                      financialBox.dataItemCaixaController!.toLowerCase();
+                      return dataItemCaixaController.contains(mesSelecionado!);
                     }).toList();
                   }
 
