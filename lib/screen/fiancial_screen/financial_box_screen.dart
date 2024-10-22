@@ -93,41 +93,35 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: anoSelecionado,
-                          items: getAnoOptions(),
-                          onChanged: (value) {
-                            setState(() {
-                              anoSelecionado = value;
-                              saldoCalculado = false;
-                              mesSelecionado = '';
-                            });
-                          },
-                          decoration: CustomInputDecoration.build(
-                            labelText: 'Filtro pelo Ano',
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: mesSelecionado,
-                          items: getMesOptions(),
-                          onChanged: (value) {
-                            setState(() {
-                              mesSelecionado = value;
-                              saldoCalculado = false; // Reseta cálculo de saldo ao mudar mês
-                            });
-                          },
-                          decoration: CustomInputDecoration.build(
-                            labelText: 'Filtro pelo Mês',
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: DropdownButtonFormField<String>(
+                    value: anoSelecionado,
+                    items: getAnoOptions(),
+                    onChanged: (value) {
+                      setState(() {
+                        anoSelecionado = value;
+                        saldoCalculado = false;
+                        mesSelecionado = '';
+                      });
+                    },
+                    decoration: CustomInputDecoration.build(
+                      labelText: 'Filtro pelo Ano',
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: DropdownButtonFormField<String>(
+                    value: mesSelecionado,
+                    items: getMesOptions(),
+                    onChanged: (value) {
+                      setState(() {
+                        mesSelecionado = value;
+                        saldoCalculado = false; // Reseta cálculo de saldo ao mudar mês
+                      });
+                    },
+                    decoration: CustomInputDecoration.build(
+                      labelText: 'Filtro pelo Mês',
+                    ),
                   ),
                 ),
                 Padding(
@@ -371,7 +365,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             // Lista de botões secundários
             children: [
               SpeedDialChild(
-                child: const Icon(Icons.attach_money),
+                child: const Icon(Icons.attach_money, color: Colors.white),
                 label: 'Registrar Caixa',
                 backgroundColor: Colors.teal,
                 onTap: () {
@@ -387,7 +381,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                 },
               ),
               SpeedDialChild(
-                child: const Icon(Icons.description),
+                child: const Icon(Icons.description, color: Colors.white,),
                 label: 'Gerar relatório de lançamentos',
                 backgroundColor: Colors.teal,
                 onTap: () {
