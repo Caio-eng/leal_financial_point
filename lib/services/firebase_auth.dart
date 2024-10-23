@@ -1,8 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../components/confirm_password.dart';
-import '../components/custom_Input_decoration.dart';
 import '../components/custom_snack_bar.dart';
 import '../screen/login_screen/login_screen.dart';
 
