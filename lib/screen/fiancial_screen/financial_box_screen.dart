@@ -32,6 +32,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   final TextEditingController _searchController = TextEditingController();
   String? anoSelecionado = '';
   String? mesSelecionado = '';
+  String? pagamentoSelecionado = '';
   late List<FinancialBox> financialBoxs = [];
 
   @override
@@ -44,6 +45,14 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
     DateTime agora = DateTime.now();
     anoSelecionado = agora.year.toString();
     mesSelecionado = agora.month.toString().padLeft(2, '0');
+  }
+
+  List<DropdownMenuItem<String>> getPagamentoOptions() {
+    return const [
+      DropdownMenuItem(value: '', child: Text('Filtrar Todos')),
+      DropdownMenuItem(value: 'Pago', child: Text('Pago')),
+      DropdownMenuItem(value: 'Falta Pagar', child: Text('Falta Pagar')),
+    ];
   }
 
   List<DropdownMenuItem<String>> getAnoOptions() {
@@ -152,6 +161,22 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     },
                     decoration: CustomInputDecoration.build(
                       labelText: 'Filtro pelo Mês',
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: DropdownButtonFormField<String>(
+                    value: pagamentoSelecionado,
+                    items: getPagamentoOptions(),
+                    onChanged: (value) {
+                      setState(() {
+                        pagamentoSelecionado = value;
+                        saldoCalculado = false;
+                      });
+                    },
+                    decoration: CustomInputDecoration.build(
+                      labelText: 'Filtro pelo Pagamento',
                     ),
                   ),
                 ),
@@ -279,6 +304,12 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     }).toList();
                   }
 
+                  if (pagamentoSelecionado != '') {
+                    financialBoxs = financialBoxs.where((financialBox) {
+                      return financialBox.pagamentoOK == pagamentoSelecionado;
+                    }).toList();
+                  }
+
                   if (!saldoCalculado) {
                     double entradas = 0;
                     double saidas = 0;
@@ -317,7 +348,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                         child: CustomCardItem(
                           title:
                           '${financialBox.tipoCaixaSelecionado} ${financialBox.dataItemCaixaController}',
-                          subtitle: 'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}',
+                          subtitle: 'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : ''}',
                           icon: Icons.attach_money,
                           owner: 'Valor: ${financialBox.valorItemCaixaController}',
                           onOptionSelected: (option) {

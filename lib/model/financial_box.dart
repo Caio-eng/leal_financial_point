@@ -5,6 +5,8 @@ class FinancialBox {
   final String? descricaoItemCaixaController;
   final String? valorItemCaixaController;
   final String? dataItemCaixaController;
+  final String? pagamentoOK;
+  final String? papelUsuario;
 
   FinancialBox({
     this.idFinancialBox,
@@ -12,7 +14,9 @@ class FinancialBox {
     this.tipoEntradaSaidaSelecionado,
     this.descricaoItemCaixaController,
     this.valorItemCaixaController,
-    this.dataItemCaixaController
+    this.dataItemCaixaController,
+    this.pagamentoOK,
+    this.papelUsuario
   });
 
   Map<String, dynamic> toMap() {
@@ -22,7 +26,9 @@ class FinancialBox {
       'tipoEntradaSaidaSelecionado': tipoEntradaSaidaSelecionado,
       'descricaoItemCaixaController': descricaoItemCaixaController,
       'valorItemCaixaController': valorItemCaixaController,
-      'dataItemCaixaController': dataItemCaixaController
+      'dataItemCaixaController': dataItemCaixaController,
+      'papelUsuario': papelUsuario,
+      'pagamentoOK': pagamentoOK
     };
   }
 
@@ -34,6 +40,8 @@ class FinancialBox {
       descricaoItemCaixaController: map['descricaoItemCaixaController'] ?? '',
       valorItemCaixaController: map['valorItemCaixaController'] ?? '',
       dataItemCaixaController: map['dataItemCaixaController'] ?? '',
+      papelUsuario: map['papelUsuario'] ?? '',
+      pagamentoOK: map['pagamentoOK'] ?? '',
     );
   }
 }

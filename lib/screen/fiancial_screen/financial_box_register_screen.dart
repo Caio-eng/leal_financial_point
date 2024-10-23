@@ -22,6 +22,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
   final _formKey = GlobalKey<FormState>();
   TextEditingController valorItemCaixaController = TextEditingController();
   TextEditingController descricaoItemCaixaController = TextEditingController();
+  String? pagamentoSelecionado = '';
   final TextEditingController dataItemCaixaController = TextEditingController();
   String? tipoCaixaSelecionado = 'Entrada';
   String? tipoEntradaSaidaSelecionado;
@@ -55,6 +56,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
               imovelData['valorItemCaixaController'] ?? '';
           dataItemCaixaController.text =
               imovelData['dataItemCaixaController'] ?? '';
+          pagamentoSelecionado = imovelData['pagamentoOK'] ?? '';
         });
       }
     } catch (e) {
@@ -127,9 +129,6 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                         setState(() {
                           tipoCaixaSelecionado = value;
                           tipoEntradaSaidaSelecionado = null;
-                          descricaoItemCaixaController.text = '';
-                          valorItemCaixaController.text = '';
-                          dataItemCaixaController.text  = '';
                         });
                       },
                       decoration: CustomInputDecoration.build(
@@ -223,6 +222,27 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                       ),
                     ),
                     const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: pagamentoSelecionado,
+                      items: const [
+                        DropdownMenuItem(
+                            value: '', child: Text('Selecione uma opção')),
+                        DropdownMenuItem(
+                            value: 'Pago', child: Text('Pago')),
+                        DropdownMenuItem(
+                            value: 'Falta Pagar', child: Text('Falta Pagar')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          pagamentoSelecionado = value;
+                        });
+                      },
+                      decoration: CustomInputDecoration.build(
+                        labelText: 'Conta Paga?',
+                        hintText: 'Selecione uma opção, isto é opicional',
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
@@ -277,6 +297,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
         descricaoItemCaixaController: descricaoItemCaixaController.text,
         valorItemCaixaController: valorItemCaixaController.text,
         dataItemCaixaController: dataItemCaixaController.text,
+        pagamentoOK: pagamentoSelecionado
       );
 
       FinancialBoxService().saveFinancialBox(idFinancialBox, widget.user.uid, newFinancialBox);

@@ -55,6 +55,12 @@ class FinancialReportService {
                           'Descrição: ${financialBox.descricaoItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 16),
                         ),
+                        financialBox.pagamentoOK != '' ? pw.SizedBox(height: 10) : pw.SizedBox(),
+                        financialBox.pagamentoOK != '' ? pw.Text(
+                          'Pagamento: ${financialBox.pagamentoOK}',
+                          style: const pw.TextStyle(fontSize: 16),
+                        ) : pw.SizedBox(),
+                        pw.SizedBox(height: 10),
                         pw.Text(
                           'Data: ${financialBox.dataItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 18),
@@ -151,6 +157,12 @@ class FinancialReportService {
                           'Descrição: ${financialBox.descricaoItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 16),
                         ),
+                        financialBox.pagamentoOK != '' ? pw.SizedBox(height: 10) : pw.SizedBox(),
+                        financialBox.pagamentoOK != '' ? pw.Text(
+                          'Pagamento: ${financialBox.pagamentoOK}',
+                          style: const pw.TextStyle(fontSize: 16),
+                        ) : pw.SizedBox(),
+                        pw.SizedBox(height: 10),
                         pw.Text(
                           'Data: ${financialBox.dataItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 18),
