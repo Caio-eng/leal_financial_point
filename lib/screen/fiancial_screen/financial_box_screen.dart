@@ -32,7 +32,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   final TextEditingController _searchController = TextEditingController();
   String? anoSelecionado = '';
   String? mesSelecionado = '';
-  late List<FinancialBox> financialBoxs;
+  late List<FinancialBox> financialBoxs = [];
 
   @override
   void initState() {
@@ -416,8 +416,14 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                 label: 'Gerar relatório de lançamentos',
                 backgroundColor: Colors.teal,
                 onTap: () {
-                 FinancialReportService().generateFinancialReport(financialBoxs, saldoAtual);
-                 customSnackBar(context, 'Relatório financeiro gerado com sucesso!');
+                  if (financialBoxs.isNotEmpty) {
+                    FinancialReportService().generateFinancialReport(
+                        financialBoxs, saldoAtual);
+                    customSnackBar(
+                        context, 'Relatório financeiro gerado com sucesso!');
+                  } else {
+                    customSnackBar(context, 'Nenhum registro de caixa foi encontrado!', backgroundColor: Colors.red);
+                  }
                 },
               ),
             ],

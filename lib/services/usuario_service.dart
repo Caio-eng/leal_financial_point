@@ -21,20 +21,4 @@ class UsuarioService {
     }
     return null; // Retorna nulo se o usuário não existir ou houver um erro
   }
-
-  Future<Map<String, dynamic>?> carregarLocador(String idLocador) async {
-    try {
-      DocumentSnapshot userProfileSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(idLocador)
-          .get();
-
-      if (userProfileSnapshot.exists) {
-        return userProfileSnapshot.data() as Map<String, dynamic>;
-      }
-    } catch (e) {
-      print('Erro ao carregar usuário: $e');
-    }
-    return null; // Retorna nulo se o usuário não existir ou houver um erro
-  }
 }

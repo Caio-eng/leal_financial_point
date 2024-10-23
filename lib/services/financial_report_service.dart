@@ -13,66 +13,75 @@ class FinancialReportService {
       pw.Page(
         pageFormat: PdfPageFormat.a4.copyWith(marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20),
         build: (pw.Context context) {
-          return pw.Column(
-            crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo do comprovante
-            children: [
-              // Título do Comprovante
-              pw.Text(
-                'Comprovante de Lançamento do Caixa',
-                style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
-              ),
-              pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
-              pw.SizedBox(height: 20),
-
-              // Detalhes do lançamento
-              pw.Container(
+          return pw.Center(
+            child: pw.Container(
                 padding: const pw.EdgeInsets.all(20),
                 decoration: pw.BoxDecoration(
-                  color: PdfColors.blue50,
                   border: pw.Border.all(color: PdfColors.blueGrey700),
-                  borderRadius: pw.BorderRadius.circular(10),
+                  borderRadius: pw.BorderRadius.circular(12),
                 ),
-                child: pw.Column(
-                  crossAxisAlignment: pw.CrossAxisAlignment.start,
-                  children: [
-                    pw.Text(
-                      'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
-                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
-                    ),
-                    pw.Text(
-                      'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
-                      style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
-                    ),
-                    pw.SizedBox(height: 10),
-                    pw.Text(
-                      'Descrição: ${financialBox.descricaoItemCaixaController}',
-                      style: const pw.TextStyle(fontSize: 16),
-                    ),
-                    pw.Text(
-                      'Data: ${financialBox.dataItemCaixaController}',
-                      style: const pw.TextStyle(fontSize: 18),
-                    ),
-                    pw.SizedBox(height: 20),
-                    pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
-                    pw.SizedBox(height: 10),
-                    pw.Text(
-                      'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
-                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.green700),
-                    ),
-                  ],
-                ),
-              ),
-              pw.SizedBox(height: 20),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo do comprovante
+                children: [
+                  // Título do Comprovante
+                  pw.Text(
+                    'Comprovante de Lançamento do Caixa',
+                    style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+                  ),
+                  pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                  pw.SizedBox(height: 20),
 
-              // Rodapé
-              pw.Align(
-                alignment: pw.Alignment.centerRight,
-                child: pw.Text(
-                  'A Leal Financial Point agradece por utilizar nosso serviço!',
-                  style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic, color: PdfColors.blueGrey400),
-                ),
-              ),
-            ],
+                  // Detalhes do lançamento
+                  pw.Container(
+                    padding: const pw.EdgeInsets.all(20),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.blue50,
+                      border: pw.Border.all(color: PdfColors.blueGrey700),
+                      borderRadius: pw.BorderRadius.circular(10),
+                    ),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
+                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.Text(
+                          'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
+                          style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Descrição: ${financialBox.descricaoItemCaixaController}',
+                          style: const pw.TextStyle(fontSize: 16),
+                        ),
+                        pw.Text(
+                          'Data: ${financialBox.dataItemCaixaController}',
+                          style: const pw.TextStyle(fontSize: 18),
+                        ),
+                        pw.SizedBox(height: 20),
+                        pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
+                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.green700),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 20),
+
+                  // Rodapé
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      'A Leal Financial Point agradece por utilizar nosso serviço!',
+                      style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic, color: PdfColors.blueGrey400),
+                    ),
+                  ),
+                ],
+              )
+            )
           );
         },
       ),

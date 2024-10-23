@@ -33,6 +33,12 @@ class _MenuState extends State<Menu> {
     verificarPerfilExistente(widget.user.uid);
   }
 
+  @override
+  void dispose() {
+    // Não utilize o context diretamente aqui
+    super.dispose();
+  }
+
   Future<void> verificarPerfilExistente(String userId) async {
     user = FirebaseAuth.instance.currentUser;
 
@@ -99,7 +105,7 @@ class _MenuState extends State<Menu> {
           ) : Container(),
           perfilExistente == true ? ListTile(
             leading: const Icon(Icons.monetization_on),
-            title: const Text('Caixa'),
+            title: const Text('Lançamentos de Caixa'),
             onTap: () {
               Navigator.push(
                   context,
@@ -212,57 +218,35 @@ class _MenuState extends State<Menu> {
         'Tem certeza de que quer excluir sua conta?',
         'Excluir',
         'Cancelar', () async {
-      Navigator.of(context).pop();
-      await _deletarConta(context);
+      _deletarConta();
     });
   }
 
-  Future<void> _deletarConta(BuildContext context) async {
+  Future<void> _deletarConta() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
 
-      if (photoUrl != null && photoUrl!.isNotEmpty) {
-        final Reference ref = FirebaseStorage.instance.refFromURL(photoUrl!);
-        await ref.delete();
-
-        setState(() {
-          photoUrl = user!.photoURL ?? '';
-        });
-      }
-
       if (user != null) {
+        // Deleta o perfil do usuário no Firestore
         DocumentSnapshot userProfileSnapshot = await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
             .get();
 
         if (userProfileSnapshot.exists) {
-          await FirebaseFirestore.instance.collection('users')
+          await FirebaseFirestore.instance
+              .collection('users')
               .doc(user.uid)
               .delete();
         }
 
-        await user.delete();
-
-        customSnackBar(context, "Conta excluída com sucesso!",
-            backgroundColor: Colors.green);
-
-        // Agora, faz o sign-out e navega para a tela de login
+        await AuthService().excluirContaWithEmail(context, email: user.email!);
         await FirebaseAuth.instance.signOut();
-
-        // Garantir que não haja mais interações com o contexto após o sign-out
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginScreen(),
-            ),
-          );
-        }
       }
+
+      // Verifica se o widget ainda está montado antes de realizar a navegação
     } catch (e) {
-      customSnackBar(
-          context, "Erro ao excluir conta!", backgroundColor: Colors.red);
+      print("Erro ao excluir conta: $e");
     }
   }
 }

@@ -1,4 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import '../components/confirm_password.dart';
+import '../components/custom_Input_decoration.dart';
+import '../components/custom_snack_bar.dart';
+import '../screen/login_screen/login_screen.dart';
 
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -24,8 +30,8 @@ class AuthService {
 
   Future<String?> cadastratUsuario(
       {required String email,
-        required String senha,
-        required String nome}) async {
+      required String senha,
+      required String nome}) async {
     try {
       UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: senha);
@@ -108,5 +114,24 @@ class AuthService {
     }
 
     return null;
+  }
+
+  Future<String?> excluirContaWithEmail(BuildContext context,
+      {required String email}) async {
+    try {
+      await _firebaseAuth.currentUser!.delete();
+
+      customSnackBar(context, "Conta excluída com sucesso!",
+          backgroundColor: Colors.green);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ),
+      );
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return e.code; // Retorna o código de erro, se houver
+    }
   }
 }
