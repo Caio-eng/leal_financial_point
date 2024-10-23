@@ -4,32 +4,32 @@ import 'package:pdf/src/widgets/document.dart';
 
 class FinancialBoxService {
 
-  Stream<QuerySnapshot> findMyFinancialBox(String userId) {
+  Stream<QuerySnapshot> findMyFinancialBox(String userId, bool ordemData) {
     return FirebaseFirestore.instance
         .collection('my_financial_box')
         .doc(userId)
         .collection('financial_box')
-        .orderBy('dataItemCaixaController', descending: true)
+        .orderBy('dataItemCaixaController', descending: ordemData)
         .snapshots();
   }
 
-  Stream<QuerySnapshot> findMyFinancialBoxEntradas(String userId) {
+  Stream<QuerySnapshot> findMyFinancialBoxEntradas(String userId, bool ordemData) {
     return FirebaseFirestore.instance
         .collection('my_financial_box')
         .doc(userId)
         .collection('financial_box')
         .where('tipoCaixaSelecionado', isEqualTo: 'Entrada')
-        .orderBy('dataItemCaixaController', descending: true)
+        .orderBy('dataItemCaixaController', descending: ordemData)
         .snapshots();
   }
 
-  Stream<QuerySnapshot> findMyFinancialBoxSaidas(String userId) {
+  Stream<QuerySnapshot> findMyFinancialBoxSaidas(String userId, bool ordemData) {
     return FirebaseFirestore.instance
         .collection('my_financial_box')
         .doc(userId)
         .collection('financial_box')
         .where('tipoCaixaSelecionado', isEqualTo: 'Saída')
-        .orderBy('dataItemCaixaController', descending: true)
+        .orderBy('dataItemCaixaController', descending: ordemData)
         .snapshots();
   }
 

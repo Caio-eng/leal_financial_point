@@ -33,6 +33,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   String? anoSelecionado = '';
   String? mesSelecionado = '';
   String? pagamentoSelecionado = '';
+  bool? ordemData = true;
   late List<FinancialBox> financialBoxs = [];
 
   @override
@@ -164,21 +165,42 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: DropdownButtonFormField<String>(
-                    value: pagamentoSelecionado,
-                    items: getPagamentoOptions(),
-                    onChanged: (value) {
-                      setState(() {
-                        pagamentoSelecionado = value;
-                        saldoCalculado = false;
-                      });
-                    },
-                    decoration: CustomInputDecoration.build(
-                      labelText: 'Filtro pelo Pagamento',
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: DropdownButtonFormField<String>(
+                        value: pagamentoSelecionado,
+                        items: getPagamentoOptions(),
+                        onChanged: (value) {
+                          setState(() {
+                            pagamentoSelecionado = value;
+                            saldoCalculado = false;
+                          });
+                        },
+                        decoration: CustomInputDecoration.build(
+                          labelText: 'Filtro pelo Pagamento',
+                        ),
+                      ),
                     ),
-                  ),
+                    ),
+                    Expanded(
+                      child: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            ordemData = !ordemData!;
+                            saldoCalculado = false;
+                          });
+                        },
+                        icon: Icon(
+                          Icons.update_outlined,
+                          color: ordemData! ? Colors.grey : Colors.teal,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -243,10 +265,10 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: filtro == 'todos'
-                  ? FinancialBoxService().findMyFinancialBox(widget.user.uid)
+                  ? FinancialBoxService().findMyFinancialBox(widget.user.uid, ordemData!)
                   : filtro == 'entradas'
-                  ? FinancialBoxService().findMyFinancialBoxEntradas(widget.user.uid)
-                  : FinancialBoxService().findMyFinancialBoxSaidas(widget.user.uid),
+                  ? FinancialBoxService().findMyFinancialBoxEntradas(widget.user.uid, ordemData!)
+                  : FinancialBoxService().findMyFinancialBoxSaidas(widget.user.uid, ordemData!),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());

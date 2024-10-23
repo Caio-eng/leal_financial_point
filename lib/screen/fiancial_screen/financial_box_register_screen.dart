@@ -239,7 +239,6 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                       },
                       decoration: CustomInputDecoration.build(
                         labelText: 'Conta Paga?',
-                        hintText: 'Selecione uma opção, isto é opicional',
                       ),
                     ),
                     const SizedBox(height: 16),
