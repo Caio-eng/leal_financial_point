@@ -9,6 +9,7 @@ class FinancialBoxService {
         .collection('my_financial_box')
         .doc(userId)
         .collection('financial_box')
+        .orderBy('dataItemCaixaController', descending: true)
         .snapshots();
   }
 
@@ -18,6 +19,7 @@ class FinancialBoxService {
         .doc(userId)
         .collection('financial_box')
         .where('tipoCaixaSelecionado', isEqualTo: 'Entrada')
+        .orderBy('dataItemCaixaController', descending: true)
         .snapshots();
   }
 
@@ -27,6 +29,7 @@ class FinancialBoxService {
         .doc(userId)
         .collection('financial_box')
         .where('tipoCaixaSelecionado', isEqualTo: 'Saída')
+        .orderBy('dataItemCaixaController', descending: true)
         .snapshots();
   }
 
