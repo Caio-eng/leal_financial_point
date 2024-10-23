@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:intl/intl.dart';
 import 'package:leal_apontar/components/menu.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:leal_apontar/screen/fiancial_screen/financial_box_register_screen.dart';
@@ -393,6 +394,18 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                                 break;
                               case 'Excluir':
                                 deleteFinancialBox(financialBox.idFinancialBox!);
+
+                              case 'Copiar registro':
+                                showCustomAlertDialog(
+                                    context,
+                                    'Copiar Registro',
+                                    'Tem certeza que deseja copiar este registro para o próximo mês?',
+                                    'Copiar',
+                                    'Cancelar', () async {
+                                  copyFinancialBox(financialBox.idFinancialBox!, financialBox, widget.user.uid);
+                                });
+                                break;
+
                             }
                           },
                         ),
@@ -501,6 +514,35 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   void onDownloadPressed(FinancialBox financialBox) async {
     FinancialReportService().generateProofFinancialBox(financialBox);
     customSnackBar(context, 'Comprovante gerado com sucesso!');
+  }
+
+  void copyFinancialBox(String idFinancialBox, FinancialBox financialBox, String uid) async{
+    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    DateTime currentDate = dateFormat.parse(financialBox.dataItemCaixaController.toString());
+    DateTime nextMonthDate = DateTime(currentDate.year, currentDate.month + 1, currentDate.day);
+
+    String nextMonthDateString = dateFormat.format(nextMonthDate);
+
+    bool exists = await FinancialBoxService().checkIfFinancialBoxExistsForDate(financialBox, nextMonthDateString, uid);
+
+    if (!exists) {
+      idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
+      FinancialBox newFinancialBox = FinancialBox(
+        idFinancialBox: idFinancialBox,
+        tipoCaixaSelecionado: financialBox.tipoCaixaSelecionado,
+        tipoEntradaSaidaSelecionado: financialBox.tipoEntradaSaidaSelecionado,
+        descricaoItemCaixaController: financialBox.descricaoItemCaixaController,
+        valorItemCaixaController: financialBox.valorItemCaixaController,
+        dataItemCaixaController: nextMonthDateString, // Ajuste a data para o próximo mês
+        pagamentoOK: financialBox.pagamentoOK,
+      );
+
+      FinancialBoxService().saveFinancialBox(idFinancialBox, uid, newFinancialBox);
+
+      customSnackBar(context, 'Registro copiado com sucesso para o mês seguinte!');
+    } else {
+      customSnackBar(context, 'Registro já existe para o próximo mês!', backgroundColor: Colors.red);
+    }
   }
 
 

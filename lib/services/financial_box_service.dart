@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:pdf/src/widgets/document.dart';
 
@@ -61,4 +63,17 @@ class FinancialBoxService {
           .delete();
     });
   }
+
+  Future<bool> checkIfFinancialBoxExistsForDate(FinancialBox financialBox, String date, String userId) async {
+    // Acessa o Firestore e verifica se já existe um registro com a mesma data
+    QuerySnapshot queryResult = await FirebaseFirestore.instance
+        .collection('my_financial_box')
+        .doc(userId)
+        .collection('financial_box')
+        .where('dataItemCaixaController', isEqualTo: date) // Verifica se existe o registro na data especificada
+        .get();
+
+    return queryResult.docs.isNotEmpty; // Retorna true se existir, false caso contrário
+  }
+
 }
