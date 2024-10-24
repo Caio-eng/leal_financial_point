@@ -522,27 +522,41 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
 
     String nextMonthDateString = dateFormat.format(nextMonthDate);
 
-    bool exists = await FinancialBoxService().checkIfFinancialBoxExistsForDescription(financialBox, financialBox.descricaoItemCaixaController!, uid);
+    bool exists = await FinancialBoxService().checkIfFinancialBoxExists(financialBox, uid);
 
-    if (!exists) {
-      idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
-      FinancialBox newFinancialBox = FinancialBox(
-        idFinancialBox: idFinancialBox,
-        tipoCaixaSelecionado: financialBox.tipoCaixaSelecionado,
-        tipoEntradaSaidaSelecionado: financialBox.tipoEntradaSaidaSelecionado,
-        descricaoItemCaixaController: financialBox.descricaoItemCaixaController,
-        valorItemCaixaController: financialBox.valorItemCaixaController,
-        dataItemCaixaController: nextMonthDateString, // Ajuste a data para o próximo mês
-        pagamentoOK: financialBox.pagamentoOK,
-      );
-
-      FinancialBoxService().saveFinancialBox(idFinancialBox, uid, newFinancialBox);
-
-      customSnackBar(context, 'Registro copiado com sucesso para o mês seguinte!');
+    if (exists) {
+      exists = await FinancialBoxService().checkIfFinancialBoxExistsForDate(financialBox, nextMonthDateString, uid);
+      if (!exists) {
+        _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+      } else {
+        showCustomAlertDialog(
+            context,
+            'Confirmar Copia',
+            'Tem um registro com está data para o mês. Tem certeza que deseja copiar este registro?',
+            'Copiar',
+            'Cancelar', () async {
+          _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+        });
+      }
     } else {
       customSnackBar(context, 'Registro já existe para o próximo mês!', backgroundColor: Colors.red);
     }
   }
 
+  _copyRegister(String idFinancialBox, FinancialBox financialBox, String uid, String nextMonthDateString) {
+    idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
+    FinancialBox newFinancialBox = FinancialBox(
+      idFinancialBox: idFinancialBox,
+      tipoCaixaSelecionado: financialBox.tipoCaixaSelecionado,
+      tipoEntradaSaidaSelecionado: financialBox.tipoEntradaSaidaSelecionado,
+      descricaoItemCaixaController: financialBox.descricaoItemCaixaController,
+      valorItemCaixaController: financialBox.valorItemCaixaController,
+      dataItemCaixaController: nextMonthDateString, // Ajuste a data para o próximo mês
+      pagamentoOK: financialBox.pagamentoOK,
+    );
+
+    FinancialBoxService().saveFinancialBox(idFinancialBox, uid, newFinancialBox);
+    customSnackBar(context, 'Registro copiado com sucesso para o mês seguinte!');
+  }
 
 }
