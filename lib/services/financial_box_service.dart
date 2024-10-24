@@ -64,13 +64,12 @@ class FinancialBoxService {
     });
   }
 
-  Future<bool> checkIfFinancialBoxExistsForDate(FinancialBox financialBox, String date, String userId) async {
-    // Acessa o Firestore e verifica se já existe um registro com a mesma data
+  Future<bool> checkIfFinancialBoxExistsForDescription(FinancialBox financialBox, String descricaoLancamento, String userId) async {
     QuerySnapshot queryResult = await FirebaseFirestore.instance
         .collection('my_financial_box')
         .doc(userId)
         .collection('financial_box')
-        .where('dataItemCaixaController', isEqualTo: date) // Verifica se existe o registro na data especificada
+        .where('descricaoItemCaixaController', isEqualTo: descricaoLancamento) // Verifica se existe o registro na data especificada
         .get();
 
     return queryResult.docs.isNotEmpty; // Retorna true se existir, false caso contrário

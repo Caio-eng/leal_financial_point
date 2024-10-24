@@ -522,7 +522,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
 
     String nextMonthDateString = dateFormat.format(nextMonthDate);
 
-    bool exists = await FinancialBoxService().checkIfFinancialBoxExistsForDate(financialBox, nextMonthDateString, uid);
+    bool exists = await FinancialBoxService().checkIfFinancialBoxExistsForDescription(financialBox, financialBox.descricaoItemCaixaController!, uid);
 
     if (!exists) {
       idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
