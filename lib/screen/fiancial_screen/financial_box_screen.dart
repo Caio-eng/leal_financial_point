@@ -476,7 +476,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   saldoCalculado = false;
                 },
               ),
-              SpeedDialChild(
+              financialBoxs.isNotEmpty ? SpeedDialChild(
                 child: const Icon(Icons.description, color: Colors.white,),
                 label: 'Gerar relatório de lançamentos',
                 backgroundColor: Colors.teal,
@@ -490,8 +490,10 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     customSnackBar(context, 'Nenhum registro de caixa foi encontrado!', backgroundColor: Colors.red);
                   }
                 },
-              ),
-              SpeedDialChild(
+              ) : SpeedDialChild(),
+              financialBoxs.isEmpty ? SpeedDialChild()
+                  : anoSelecionado == '' && mesSelecionado == '' ? SpeedDialChild()
+                  : SpeedDialChild(
                 child: const Icon(Icons.copy, color: Colors.white,),
                 label: 'Copiar Lista de Lançamentos',
                 backgroundColor: Colors.teal,
@@ -499,14 +501,14 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   copyListFinancialBox(financialBoxs); // Chama a funcionalidade de copiar o listado
                 },
               ),
-              SpeedDialChild(
+              financialBoxs.isNotEmpty ? SpeedDialChild(
                 child: const Icon(Icons.delete, color: Colors.white,),
                 label: 'Deletar Lista de Lançamentos',
                 backgroundColor: Colors.teal,
                 onTap: () {
                  deleteAllFinancialBox(financialBoxs);
                 },
-              ),
+              ) : SpeedDialChild(),
             ],
           )
         ],

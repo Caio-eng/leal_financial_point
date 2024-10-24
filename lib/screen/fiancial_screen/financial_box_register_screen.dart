@@ -99,6 +99,28 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
     }
   }
 
+  List<DropdownMenuItem<String>> getPagamentoSaidaOptions() {
+    return const [
+      DropdownMenuItem(
+          value: '', child: Text('Selecione uma opção')),
+      DropdownMenuItem(
+          value: 'Pago', child: Text('Pago')),
+      DropdownMenuItem(
+          value: 'Falta Pagar', child: Text('Falta Pagar')),
+    ];
+  }
+
+  List<DropdownMenuItem<String>> getPagamentoEntradaOptions() {
+    return const [
+      DropdownMenuItem(
+          value: '', child: Text('Selecione uma opção')),
+      DropdownMenuItem(
+          value: 'Recebido', child: Text('Recebido')),
+      DropdownMenuItem(
+          value: 'Falta Receber', child: Text('Falta Receber')),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,21 +246,14 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: pagamentoSelecionado,
-                      items: const [
-                        DropdownMenuItem(
-                            value: '', child: Text('Selecione uma opção')),
-                        DropdownMenuItem(
-                            value: 'Pago', child: Text('Pago')),
-                        DropdownMenuItem(
-                            value: 'Falta Pagar', child: Text('Falta Pagar')),
-                      ],
+                      items: tipoCaixaSelecionado == 'Entrada' ? getPagamentoEntradaOptions() : getPagamentoSaidaOptions(),
                       onChanged: (value) {
                         setState(() {
                           pagamentoSelecionado = value;
                         });
                       },
                       decoration: CustomInputDecoration.build(
-                        labelText: 'Conta Paga?',
+                        labelText: tipoCaixaSelecionado == 'Saída' ? 'Conta Paga?' : 'Conta Recebida?',
                       ),
                     ),
                     const SizedBox(height: 16),
