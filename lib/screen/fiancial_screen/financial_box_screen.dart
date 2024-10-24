@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:intl/intl.dart';
 import 'package:leal_apontar/components/menu.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:leal_apontar/screen/fiancial_screen/financial_box_register_screen.dart';
@@ -393,6 +394,17 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                                 break;
                               case 'Excluir':
                                 deleteFinancialBox(financialBox.idFinancialBox!);
+
+                              case 'Copiar registro':
+                                showCustomAlertDialog(
+                                    context,
+                                    'Copiar Registro',
+                                    'Tem certeza que deseja copiar este registro para o próximo mês?',
+                                    'Copiar',
+                                    'Cancelar', () async {
+                                  copyFinancialBox(financialBox.idFinancialBox!, financialBox, widget.user.uid);
+                                });
+                                break;
                             }
                           },
                         ),
@@ -413,7 +425,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(30),
-              color: Colors.teal, // Cor similar ao FloatingActionButton
+              color: saldoAtual >= 0 ? Colors.teal : Colors.red, // Cor similar ao FloatingActionButton
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,11 +491,47 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   }
                 },
               ),
+              SpeedDialChild(
+                child: const Icon(Icons.copy, color: Colors.white,),
+                label: 'Copiar Lista de Lançamentos',
+                backgroundColor: Colors.teal,
+                onTap: () {
+                  copyListFinancialBox(financialBoxs); // Chama a funcionalidade de copiar o listado
+                },
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.delete, color: Colors.white,),
+                label: 'Deletar Lista de Lançamentos',
+                backgroundColor: Colors.teal,
+                onTap: () {
+                 deleteAllFinancialBox(financialBoxs);
+                },
+              ),
             ],
           )
         ],
       ),
     );
+  }
+
+  Future<void> deleteAllFinancialBox(financialBoxs) async {
+    if (financialBoxs.isNotEmpty) {
+      showCustomAlertDialog(
+          context,
+          'Confirmar Exclusão',
+          'Tem certeza que deseja excluir todos os lançamento de caixa?',
+          'Excluir',
+          'Cancelar', () async {
+        for (var financialBox in financialBoxs) {
+          FinancialBoxService().deleteFinancialBox(financialBox.idFinancialBox, widget.user.uid);
+        }
+        mesSelecionado = DateTime.now().month.toString().padLeft(2, '0');
+        setState(() {});
+        customSnackBar(context, 'Lançamentos de caixa excluídos com sucesso!');
+      });
+    } else {
+      customSnackBar(context, 'Nenhum lançamento de caixa foi encontrado!', backgroundColor: Colors.red);
+    }
   }
 
   Future<void> deleteFinancialBox(String idFinancialBox) async {
@@ -503,5 +551,78 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
     customSnackBar(context, 'Comprovante gerado com sucesso!');
   }
 
+  void copyListFinancialBox(financialBoxs) async{
+    if (financialBoxs.isNotEmpty) {
+      showCustomAlertDialog(
+          context,
+          'Confirmar Copia',
+          'Será copiado todos lançamentos de caixa para o mês seguinte, deseja continuar?\nOBS: Caso use neste mês a funcionalidade novamente irá duplicar os lançamentos, tenha cuidado!',
+          'Copiar',
+          'Cancelar', () async {
+        for (FinancialBox financialBox in financialBoxs) {
+          DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+          DateTime currentDate = dateFormat.parse(financialBox.dataItemCaixaController.toString());
+          DateTime nextMonthDate = DateTime(currentDate.year, currentDate.month + 1, currentDate.day);
+
+          String nextMonthDateString = dateFormat.format(nextMonthDate);
+
+          bool exists = await FinancialBoxService().checkIfFinancialBoxExists(financialBox, widget.user.uid);
+
+          if (exists) {
+            _copyRegister(financialBox.idFinancialBox!, financialBox, widget.user.uid, nextMonthDateString);
+          }
+        }
+        customSnackBar(context, 'Lançamentos copiado com sucesso para o mês seguinte!');
+      },
+        showLoadingIndicator: true,
+      );
+    } else {
+      customSnackBar(context, 'Nenhum lançamento de caixa foi encontrado!', backgroundColor: Colors.red);
+    }
+  }
+
+  void copyFinancialBox(String idFinancialBox, FinancialBox financialBox, String uid) async{
+    DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    DateTime currentDate = dateFormat.parse(financialBox.dataItemCaixaController.toString());
+    DateTime nextMonthDate = DateTime(currentDate.year, currentDate.month + 1, currentDate.day);
+
+    String nextMonthDateString = dateFormat.format(nextMonthDate);
+
+    bool exists = await FinancialBoxService().checkIfFinancialBoxExists(financialBox, uid);
+
+    if (exists) {
+      exists = await FinancialBoxService().checkIfFinancialBoxExistsForDate(financialBox, nextMonthDateString, uid);
+      if (!exists) {
+        _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+      } else {
+        showCustomAlertDialog(
+            context,
+            'Confirmar Copia',
+            'Tem um registro com está data para o mês. Tem certeza que deseja copiar este registro?',
+            'Copiar',
+            'Cancelar', () async {
+          _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+          customSnackBar(context, 'Registro copiado com sucesso para o mês seguinte!');
+        });
+      }
+    } else {
+      customSnackBar(context, 'Registro já existe para o próximo mês!', backgroundColor: Colors.red);
+    }
+  }
+
+  _copyRegister(String idFinancialBox, FinancialBox financialBox, String uid, String nextMonthDateString) {
+    idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
+    FinancialBox newFinancialBox = FinancialBox(
+      idFinancialBox: idFinancialBox,
+      tipoCaixaSelecionado: financialBox.tipoCaixaSelecionado,
+      tipoEntradaSaidaSelecionado: financialBox.tipoEntradaSaidaSelecionado,
+      descricaoItemCaixaController: financialBox.descricaoItemCaixaController,
+      valorItemCaixaController: financialBox.valorItemCaixaController,
+      dataItemCaixaController: nextMonthDateString, // Ajuste a data para o próximo mês
+      pagamentoOK: financialBox.pagamentoOK,
+    );
+
+    FinancialBoxService().saveFinancialBox(idFinancialBox, uid, newFinancialBox);
+  }
 
 }

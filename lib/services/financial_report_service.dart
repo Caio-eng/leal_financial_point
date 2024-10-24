@@ -170,7 +170,7 @@ class FinancialReportService {
                         pw.SizedBox(height: 10),
                         pw.Text(
                           'Valor: ${financialBox.valorItemCaixaController}',
-                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.green700),
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.green700),
                         ),
                       ],
                     ),
