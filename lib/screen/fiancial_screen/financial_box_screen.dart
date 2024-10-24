@@ -405,7 +405,6 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                                   copyFinancialBox(financialBox.idFinancialBox!, financialBox, widget.user.uid);
                                 });
                                 break;
-
                             }
                           },
                         ),
@@ -426,7 +425,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(30),
-              color: Colors.teal, // Cor similar ao FloatingActionButton
+              color: saldoAtual >= 0 ? Colors.teal : Colors.red, // Cor similar ao FloatingActionButton
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
