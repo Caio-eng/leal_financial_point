@@ -491,11 +491,47 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   }
                 },
               ),
+              SpeedDialChild(
+                child: const Icon(Icons.copy, color: Colors.white,),
+                label: 'Copiar Lista de Lançamentos',
+                backgroundColor: Colors.teal,
+                onTap: () {
+                  copyListFinancialBox(financialBoxs); // Chama a funcionalidade de copiar o listado
+                },
+              ),
+              SpeedDialChild(
+                child: const Icon(Icons.delete, color: Colors.white,),
+                label: 'Deletar Lista de Lançamentos',
+                backgroundColor: Colors.teal,
+                onTap: () {
+                 deleteAllFinancialBox(financialBoxs);
+                },
+              ),
             ],
           )
         ],
       ),
     );
+  }
+
+  Future<void> deleteAllFinancialBox(financialBoxs) async {
+    if (financialBoxs.isNotEmpty) {
+      showCustomAlertDialog(
+          context,
+          'Confirmar Exclusão',
+          'Tem certeza que deseja excluir todos os lançamento de caixa?',
+          'Excluir',
+          'Cancelar', () async {
+        for (var financialBox in financialBoxs) {
+          FinancialBoxService().deleteFinancialBox(financialBox.idFinancialBox, widget.user.uid);
+        }
+        mesSelecionado = DateTime.now().month.toString().padLeft(2, '0');
+        setState(() {});
+        customSnackBar(context, 'Lançamentos de caixa excluídos com sucesso!');
+      });
+    } else {
+      customSnackBar(context, 'Nenhum lançamento de caixa foi encontrado!', backgroundColor: Colors.red);
+    }
   }
 
   Future<void> deleteFinancialBox(String idFinancialBox) async {
@@ -513,6 +549,36 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   void onDownloadPressed(FinancialBox financialBox) async {
     FinancialReportService().generateProofFinancialBox(financialBox);
     customSnackBar(context, 'Comprovante gerado com sucesso!');
+  }
+
+  void copyListFinancialBox(financialBoxs) async{
+    if (financialBoxs.isNotEmpty) {
+      showCustomAlertDialog(
+          context,
+          'Confirmar Copia',
+          'Será copiado todos lançamentos de caixa para o mês seguinte, deseja continuar?\nOBS: Caso use neste mês a funcionalidade novamente irá duplicar os lançamentos, tenha cuidado!',
+          'Copiar',
+          'Cancelar', () async {
+        for (FinancialBox financialBox in financialBoxs) {
+          DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+          DateTime currentDate = dateFormat.parse(financialBox.dataItemCaixaController.toString());
+          DateTime nextMonthDate = DateTime(currentDate.year, currentDate.month + 1, currentDate.day);
+
+          String nextMonthDateString = dateFormat.format(nextMonthDate);
+
+          bool exists = await FinancialBoxService().checkIfFinancialBoxExists(financialBox, widget.user.uid);
+
+          if (exists) {
+            _copyRegister(financialBox.idFinancialBox!, financialBox, widget.user.uid, nextMonthDateString);
+          }
+        }
+        customSnackBar(context, 'Lançamentos copiado com sucesso para o mês seguinte!');
+      },
+        showLoadingIndicator: true,
+      );
+    } else {
+      customSnackBar(context, 'Nenhum lançamento de caixa foi encontrado!', backgroundColor: Colors.red);
+    }
   }
 
   void copyFinancialBox(String idFinancialBox, FinancialBox financialBox, String uid) async{
@@ -536,6 +602,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             'Copiar',
             'Cancelar', () async {
           _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+          customSnackBar(context, 'Registro copiado com sucesso para o mês seguinte!');
         });
       }
     } else {
@@ -556,7 +623,6 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
     );
 
     FinancialBoxService().saveFinancialBox(idFinancialBox, uid, newFinancialBox);
-    customSnackBar(context, 'Registro copiado com sucesso para o mês seguinte!');
   }
 
 }
