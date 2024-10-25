@@ -93,7 +93,7 @@ class _MenuState extends State<Menu> {
                       builder: (context) => HomeScreen(user: widget.user)));
             },
           ),
-          perfilExistente == true ? ListTile(
+          perfilExistente == true && typeUser == 'SUPER_ADMIN' ? ListTile(
             leading: const Icon(Icons.attach_money),
             title: const Text('Cotação'),
             onTap: () {

@@ -21,12 +21,14 @@ class FinancialBoxRegisterScreen extends StatefulWidget {
 class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController valorItemCaixaController = TextEditingController();
+  TextEditingController valorSomatorioController = TextEditingController();
   TextEditingController descricaoItemCaixaController = TextEditingController();
   String? pagamentoSelecionado = '';
   final TextEditingController dataItemCaixaController = TextEditingController();
   String? tipoCaixaSelecionado = 'Entrada';
   String? tipoEntradaSaidaSelecionado;
   late String idFinancialBox = '';
+  String valorSomatorioFormatado = '';
 
   @override
   void initState() {
@@ -223,6 +225,20 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                       ),
                     ),
                     const SizedBox(height: 16),
+                    widget.idEditarFinancialBox != null ? TextFormField(
+                      controller: valorSomatorioController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        CurrencyTextInputFormatter()
+                      ],
+                      decoration: CustomInputDecoration.build(
+                        hintText: tipoCaixaSelecionado == 'Entrada' ? 'Digite o valor da entrada a ser somado' : 'Digite o valor da saída a ser somad',
+                        labelText: 'Valor Somatório',
+                        suffixIcon: const Icon(Icons.add_box_sharp),
+                      ),
+                    ) : Container(),
+                    widget.idEditarFinancialBox != null ? const SizedBox(height: 16) : Container(),
                     GestureDetector(
                       onTap: () {
                         _selectDate(context); // Exibir o DatePicker
@@ -300,6 +316,11 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
 
       if (widget.idEditarFinancialBox != null) {
         idFinancialBox = widget.idEditarFinancialBox!;
+        if (valorSomatorioController.text != '') {
+          double valorSomatorio = FinancialBoxService().convertValorToDouble(valorItemCaixaController.text)
+              + FinancialBoxService().convertValorToDouble(valorSomatorioController.text);
+          valorSomatorioFormatado = FinancialBoxService().convertValorToString(valorSomatorio);
+        }
       } else {
         idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
       }
@@ -309,7 +330,9 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
         tipoCaixaSelecionado: tipoCaixaSelecionado,
         tipoEntradaSaidaSelecionado: tipoEntradaSaidaSelecionado,
         descricaoItemCaixaController: descricaoItemCaixaController.text,
-        valorItemCaixaController: valorItemCaixaController.text,
+        valorItemCaixaController: widget.idEditarFinancialBox != null
+            && valorSomatorioController.text != '' ?
+        valorSomatorioFormatado : valorItemCaixaController.text,
         dataItemCaixaController: dataItemCaixaController.text,
         pagamentoOK: pagamentoSelecionado
       );

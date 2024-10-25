@@ -85,4 +85,18 @@ class FinancialBoxService {
     return queryResult.docs.isNotEmpty; // Retorna true se existir, false caso contrário
   }
 
+  double convertValorToDouble(String value) {
+    return double.parse( value
+        .replaceAll('R\$', '')
+        .replaceAll('.', '')
+        .replaceAll(',', '.')
+        .trim()
+    );
+  }
+
+  String convertValorToString(double value) {
+    String valorSomatorioFormatado = 'R\$ ${value.toStringAsFixed(2)}';
+    return valorSomatorioFormatado.replaceAll('.', ',');
+  }
+
 }
