@@ -12,13 +12,16 @@ import '../../components/custom_snack_bar.dart';
 class FinancialBoxRegisterScreen extends StatefulWidget {
   User user;
   final String? idEditarFinancialBox;
-  FinancialBoxRegisterScreen({super.key, required this.user, this.idEditarFinancialBox});
+  FinancialBoxRegisterScreen(
+      {super.key, required this.user, this.idEditarFinancialBox});
 
   @override
-  State<FinancialBoxRegisterScreen> createState() => _FinancialBoxRegisterScreenState();
+  State<FinancialBoxRegisterScreen> createState() =>
+      _FinancialBoxRegisterScreenState();
 }
 
-class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen> {
+class _FinancialBoxRegisterScreenState
+    extends State<FinancialBoxRegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController valorItemCaixaController = TextEditingController();
   TextEditingController valorSomatorioController = TextEditingController();
@@ -29,6 +32,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
   String? tipoEntradaSaidaSelecionado;
   late String idFinancialBox = '';
   String valorSomatorioFormatado = '';
+  bool showTextField = false;
 
   @override
   void initState() {
@@ -45,7 +49,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
 
       if (financialBoxDoc.exists) {
         Map<String, dynamic> imovelData =
-        financialBoxDoc.data() as Map<String, dynamic>;
+            financialBoxDoc.data() as Map<String, dynamic>;
 
         setState(() {
           idFinancialBox = imovelData['idFinancialBox'] ?? '';
@@ -92,9 +96,8 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
     );
 
     if (pickedDate != null) {
-      String formattedDate = "${pickedDate.day.toString().padLeft(
-          2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate
-          .year}"; // Formato dd/MM/yyyy
+      String formattedDate =
+          "${pickedDate.day.toString().padLeft(2, '0')}/${pickedDate.month.toString().padLeft(2, '0')}/${pickedDate.year}"; // Formato dd/MM/yyyy
       setState(() {
         dataItemCaixaController.text = formattedDate;
       });
@@ -103,23 +106,17 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
 
   List<DropdownMenuItem<String>> getPagamentoSaidaOptions() {
     return const [
-      DropdownMenuItem(
-          value: '', child: Text('Selecione uma opção')),
-      DropdownMenuItem(
-          value: 'Pago', child: Text('Pago')),
-      DropdownMenuItem(
-          value: 'Falta Pagar', child: Text('Falta Pagar')),
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
+      DropdownMenuItem(value: 'Pago', child: Text('Pago')),
+      DropdownMenuItem(value: 'Falta Pagar', child: Text('Falta Pagar')),
     ];
   }
 
   List<DropdownMenuItem<String>> getPagamentoEntradaOptions() {
     return const [
-      DropdownMenuItem(
-          value: '', child: Text('Selecione uma opção')),
-      DropdownMenuItem(
-          value: 'Recebido', child: Text('Recebido')),
-      DropdownMenuItem(
-          value: 'Falta Receber', child: Text('Falta Receber')),
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
+      DropdownMenuItem(value: 'Recebido', child: Text('Recebido')),
+      DropdownMenuItem(value: 'Falta Receber', child: Text('Falta Receber')),
     ];
   }
 
@@ -129,7 +126,9 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
       appBar: AppBar(
         backgroundColor: Colors.teal,
         centerTitle: true,
-        title: Text(idFinancialBox == '' ? 'Cadastrar Laçamento de Caixa' : 'Atualizar Laçamento de Caixa'),
+        title: Text(idFinancialBox == ''
+            ? 'Cadastrar Laçamento de Caixa'
+            : 'Atualizar Laçamento de Caixa'),
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
@@ -146,8 +145,7 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                       items: const [
                         DropdownMenuItem(
                             value: 'Entrada', child: Text('Entrada')),
-                        DropdownMenuItem(
-                            value: 'Saída', child: Text('Saída')),
+                        DropdownMenuItem(value: 'Saída', child: Text('Saída')),
                       ],
                       onChanged: (value) {
                         setState(() {
@@ -171,15 +169,17 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                       items: tipoCaixaSelecionado == 'Entrada'
                           ? getEntradaOptions()
                           : tipoCaixaSelecionado == 'Saída'
-                          ? getSaidaOptions()
-                          : [],
+                              ? getSaidaOptions()
+                              : [],
                       onChanged: (value) {
                         setState(() {
                           tipoEntradaSaidaSelecionado = value;
                         });
                       },
                       decoration: CustomInputDecoration.build(
-                        labelText: tipoCaixaSelecionado == 'Entrada' ? 'Tipo da Entrada' : 'Tipo da Saída',
+                        labelText: tipoCaixaSelecionado == 'Entrada'
+                            ? 'Tipo da Entrada'
+                            : 'Tipo da Saída',
                       ),
                       validator: (value) {
                         if (value == null) {
@@ -198,47 +198,85 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                         return null;
                       },
                       decoration: CustomInputDecoration.build(
-                        hintText: tipoCaixaSelecionado == 'Entrada' ? 'ex: Dízimo do João' : 'ex: Conta de energia',
-                        labelText: tipoCaixaSelecionado == 'Entrada' ? 'Descrição da Entrada' : 'Descrição da Saída',
+                        hintText: tipoCaixaSelecionado == 'Entrada'
+                            ? 'ex: Dízimo do João'
+                            : 'ex: Conta de energia',
+                        labelText: tipoCaixaSelecionado == 'Entrada'
+                            ? 'Descrição da Entrada'
+                            : 'Descrição da Saída',
                         suffixIcon: const Icon(Icons.description),
                       ),
                       maxLines: null,
                     ),
                     const SizedBox(height: 16),
-                    TextFormField(
-                      controller: valorItemCaixaController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        CurrencyTextInputFormatter()
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: TextFormField(
+                            controller: valorItemCaixaController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              CurrencyTextInputFormatter()
+                            ],
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return 'Valor do Item da caixa é obrigatório!';
+                              }
+                              return null;
+                            },
+                            decoration: CustomInputDecoration.build(
+                              hintText: tipoCaixaSelecionado == 'Entrada'
+                                  ? 'Digite o valor da entrada'
+                                  : 'Digite o valor da saída',
+                              labelText: tipoCaixaSelecionado == 'Entrada'
+                                  ? 'Valor da Entrada'
+                                  : 'Valor da Saída',
+                              suffixIcon: const Icon(Icons.monetization_on),
+                            ),
+                          ),
+                        ),
+                        widget.idEditarFinancialBox != null
+                            ? Expanded(
+                                child: Tooltip(
+                                  message: "Adicionar valor",
+                                  child: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        showTextField =
+                                            !showTextField; // Alterar estado
+                                      });
+                                    },
+                                    icon: showTextField ? const Icon(Icons.remove) : const Icon(Icons.add),
+                                    color: showTextField ? Colors.teal : Colors.black,
+                                  ),
+                                ),
+                              )
+                            : Container()
                       ],
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return 'Valor do Item da caixa é obrigatório!';
-                        }
-                        return null;
-                      },
-                      decoration: CustomInputDecoration.build(
-                        hintText: tipoCaixaSelecionado == 'Entrada' ? 'Digite o valor da entrada' : 'Digite o valor da saída',
-                        labelText: tipoCaixaSelecionado == 'Entrada' ? 'Valor da Entrada' : 'Valor da Saída',
-                        suffixIcon: const Icon(Icons.monetization_on),
-                      ),
                     ),
                     const SizedBox(height: 16),
-                    widget.idEditarFinancialBox != null ? TextFormField(
-                      controller: valorSomatorioController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        CurrencyTextInputFormatter()
-                      ],
-                      decoration: CustomInputDecoration.build(
-                        hintText: tipoCaixaSelecionado == 'Entrada' ? 'Digite o valor da entrada a ser somado' : 'Digite o valor da saída a ser somad',
-                        labelText: 'Valor Somatório',
-                        suffixIcon: const Icon(Icons.add_box_sharp),
-                      ),
-                    ) : Container(),
-                    widget.idEditarFinancialBox != null ? const SizedBox(height: 16) : Container(),
+                    showTextField
+                        ? TextFormField(
+                            controller: valorSomatorioController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              CurrencyTextInputFormatter()
+                            ],
+                            decoration: CustomInputDecoration.build(
+                              hintText: tipoCaixaSelecionado == 'Entrada'
+                                  ? 'Digite o valor a ser somado a entrada'
+                                  : 'Digite o valor a ser somado a saída',
+                              labelText: 'Valor Somatório',
+                              suffixIcon: const Icon(Icons.monetization_on),
+                            ),
+                          )
+                        : Container(),
+                    showTextField
+                        ? const SizedBox(height: 16)
+                        : Container(),
                     GestureDetector(
                       onTap: () {
                         _selectDate(context); // Exibir o DatePicker
@@ -247,7 +285,9 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                         child: TextFormField(
                           controller: dataItemCaixaController,
                           decoration: CustomInputDecoration.build(
-                            labelText: tipoCaixaSelecionado == 'Entrada' ? 'Data da Entrada' : 'Data da Saída',
+                            labelText: tipoCaixaSelecionado == 'Entrada'
+                                ? 'Data da Entrada'
+                                : 'Data da Saída',
                             suffixIcon: const Icon(Icons.calendar_today),
                           ),
                           validator: (value) {
@@ -262,14 +302,18 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: pagamentoSelecionado,
-                      items: tipoCaixaSelecionado == 'Entrada' ? getPagamentoEntradaOptions() : getPagamentoSaidaOptions(),
+                      items: tipoCaixaSelecionado == 'Entrada'
+                          ? getPagamentoEntradaOptions()
+                          : getPagamentoSaidaOptions(),
                       onChanged: (value) {
                         setState(() {
                           pagamentoSelecionado = value;
                         });
                       },
                       decoration: CustomInputDecoration.build(
-                        labelText: tipoCaixaSelecionado == 'Saída' ? 'Conta Paga?' : 'Conta Recebida?',
+                        labelText: tipoCaixaSelecionado == 'Saída'
+                            ? 'Conta Paga?'
+                            : 'Conta Recebida?',
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -302,7 +346,6 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
   }
 
   Future<void> _saveFinancialBox() async {
-
     // Exibe um indicador de carregamento durante o salvamento
     showDialog(
       context: context,
@@ -313,38 +356,46 @@ class _FinancialBoxRegisterScreenState extends State<FinancialBoxRegisterScreen>
     );
 
     try {
-
       if (widget.idEditarFinancialBox != null) {
         idFinancialBox = widget.idEditarFinancialBox!;
         if (valorSomatorioController.text != '') {
-          double valorSomatorio = FinancialBoxService().convertValorToDouble(valorItemCaixaController.text)
-              + FinancialBoxService().convertValorToDouble(valorSomatorioController.text);
-          valorSomatorioFormatado = FinancialBoxService().convertValorToString(valorSomatorio);
+          double valorSomatorio = FinancialBoxService()
+                  .convertValorToDouble(valorItemCaixaController.text) +
+              FinancialBoxService()
+                  .convertValorToDouble(valorSomatorioController.text);
+          valorSomatorioFormatado =
+              FinancialBoxService().convertValorToString(valorSomatorio);
         }
       } else {
-        idFinancialBox = FirebaseFirestore.instance.collection('financial_box').doc().id;
+        idFinancialBox =
+            FirebaseFirestore.instance.collection('financial_box').doc().id;
       }
 
       FinancialBox newFinancialBox = FinancialBox(
-        idFinancialBox: idFinancialBox,
-        tipoCaixaSelecionado: tipoCaixaSelecionado,
-        tipoEntradaSaidaSelecionado: tipoEntradaSaidaSelecionado,
-        descricaoItemCaixaController: descricaoItemCaixaController.text,
-        valorItemCaixaController: widget.idEditarFinancialBox != null
-            && valorSomatorioController.text != '' ?
-        valorSomatorioFormatado : valorItemCaixaController.text,
-        dataItemCaixaController: dataItemCaixaController.text,
-        pagamentoOK: pagamentoSelecionado
-      );
+          idFinancialBox: idFinancialBox,
+          tipoCaixaSelecionado: tipoCaixaSelecionado,
+          tipoEntradaSaidaSelecionado: tipoEntradaSaidaSelecionado,
+          descricaoItemCaixaController: descricaoItemCaixaController.text,
+          valorItemCaixaController: widget.idEditarFinancialBox != null &&
+                  valorSomatorioController.text != ''
+              ? valorSomatorioFormatado
+              : valorItemCaixaController.text,
+          dataItemCaixaController: dataItemCaixaController.text,
+          pagamentoOK: pagamentoSelecionado);
 
-      FinancialBoxService().saveFinancialBox(idFinancialBox, widget.user.uid, newFinancialBox);
+      FinancialBoxService()
+          .saveFinancialBox(idFinancialBox, widget.user.uid, newFinancialBox);
       Navigator.of(context).pop();
 
       customSnackBar(
         context,
         widget.idEditarFinancialBox != null
-            ? tipoCaixaSelecionado == 'Entrada' ? "Entrada atualizada com sucesso!" : "Saída atualizada com sucesso!"
-            : tipoCaixaSelecionado == 'Entrada' ? "Entrada registrada com sucesso!" : "Saída registrada com sucesso!",
+            ? tipoCaixaSelecionado == 'Entrada'
+                ? "Entrada atualizada com sucesso!"
+                : "Saída atualizada com sucesso!"
+            : tipoCaixaSelecionado == 'Entrada'
+                ? "Entrada registrada com sucesso!"
+                : "Saída registrada com sucesso!",
         backgroundColor: Colors.green,
       );
 
