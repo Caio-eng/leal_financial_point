@@ -54,6 +54,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       DropdownMenuItem(value: '', child: Text('Filtrar Todos')),
       DropdownMenuItem(value: 'Pago', child: Text('Pago')),
       DropdownMenuItem(value: 'Falta Pagar', child: Text('Falta Pagar')),
+      DropdownMenuItem(value: 'Recebido', child: Text('Recebido')),
+      DropdownMenuItem(value: 'Falta Receber', child: Text('Falta Receber')),
     ];
   }
 
