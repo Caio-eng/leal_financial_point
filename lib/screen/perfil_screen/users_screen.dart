@@ -190,7 +190,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       final usuario = usuarios[index];
                       return GestureDetector(
                         onTap: () {
-                          typeUserSelecionado = usuario.typeUser!;
+                          typeNivelSelecionado = usuario.typeUser!;
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
