@@ -94,7 +94,7 @@ class FinancialReportService {
     );
 
     final bytes = await pdf.save();
-    final blob = html.Blob([bytes], 'Comprovante Financeiro.pdf');
+    final blob = html.Blob([bytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
     html.AnchorElement(href: url)
       ..setAttribute('download', 'comprovante_financeiro.pdf')
@@ -244,7 +244,7 @@ class FinancialReportService {
     );
 
     final bytes = await pdf.save();
-    final blob = html.Blob([bytes], 'Relatorio Financeiro.pdf');
+    final blob = html.Blob([bytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
     html.AnchorElement(href: url)
       ..setAttribute('download', 'relatorio_financeiro.pdf')
