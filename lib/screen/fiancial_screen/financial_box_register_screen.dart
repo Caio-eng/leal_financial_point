@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:leal_apontar/model/financial_box.dart';
+import 'package:leal_apontar/services/comuns_service.dart';
 import 'package:leal_apontar/services/financial_box_service.dart';
 
 import '../../components/currency_text_input_formatter.dart';
@@ -71,22 +72,6 @@ class _FinancialBoxRegisterScreenState
     }
   }
 
-  List<DropdownMenuItem<String>> getEntradaOptions() {
-    return const [
-      DropdownMenuItem(value: 'Dizimo', child: Text('Dízimo')),
-      DropdownMenuItem(value: 'Oferta', child: Text('Oferta')),
-      DropdownMenuItem(value: 'Outros', child: Text('Outros')),
-    ];
-  }
-
-  List<DropdownMenuItem<String>> getSaidaOptions() {
-    return const [
-      DropdownMenuItem(value: 'Compras', child: Text('Compras')),
-      DropdownMenuItem(value: 'Despesas', child: Text('Despesas Gerais')),
-      DropdownMenuItem(value: 'Outros', child: Text('Outros')),
-    ];
-  }
-
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
@@ -102,22 +87,6 @@ class _FinancialBoxRegisterScreenState
         dataItemCaixaController.text = formattedDate;
       });
     }
-  }
-
-  List<DropdownMenuItem<String>> getPagamentoSaidaOptions() {
-    return const [
-      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
-      DropdownMenuItem(value: 'Pago', child: Text('Pago')),
-      DropdownMenuItem(value: 'Falta Pagar', child: Text('Falta Pagar')),
-    ];
-  }
-
-  List<DropdownMenuItem<String>> getPagamentoEntradaOptions() {
-    return const [
-      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
-      DropdownMenuItem(value: 'Recebido', child: Text('Recebido')),
-      DropdownMenuItem(value: 'Falta Receber', child: Text('Falta Receber')),
-    ];
   }
 
   @override
@@ -167,9 +136,9 @@ class _FinancialBoxRegisterScreenState
                     DropdownButtonFormField<String>(
                       value: tipoEntradaSaidaSelecionado,
                       items: tipoCaixaSelecionado == 'Entrada'
-                          ? getEntradaOptions()
+                          ? ComunsService().getEntradaOptions()
                           : tipoCaixaSelecionado == 'Saída'
-                              ? getSaidaOptions()
+                              ? ComunsService().getSaidaOptions()
                               : [],
                       onChanged: (value) {
                         setState(() {
@@ -303,8 +272,8 @@ class _FinancialBoxRegisterScreenState
                     DropdownButtonFormField<String>(
                       value: pagamentoSelecionado,
                       items: tipoCaixaSelecionado == 'Entrada'
-                          ? getPagamentoEntradaOptions()
-                          : getPagamentoSaidaOptions(),
+                          ? ComunsService().getPagamentoEntradaOptions()
+                          : ComunsService().getPagamentoSaidaOptions(),
                       onChanged: (value) {
                         setState(() {
                           pagamentoSelecionado = value;

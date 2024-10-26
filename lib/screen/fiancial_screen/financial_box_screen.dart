@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:leal_apontar/components/menu.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:leal_apontar/screen/fiancial_screen/financial_box_register_screen.dart';
+import 'package:leal_apontar/services/comuns_service.dart';
 import 'package:leal_apontar/services/financial_box_service.dart';
 import 'package:leal_apontar/services/financial_report_service.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -47,44 +48,6 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
     DateTime agora = DateTime.now();
     anoSelecionado = agora.year.toString();
     mesSelecionado = agora.month.toString().padLeft(2, '0');
-  }
-
-  List<DropdownMenuItem<String>> getPagamentoOptions() {
-    return const [
-      DropdownMenuItem(value: '', child: Text('Filtrar Todos')),
-      DropdownMenuItem(value: 'Pago', child: Text('Pago')),
-      DropdownMenuItem(value: 'Falta Pagar', child: Text('Falta Pagar')),
-      DropdownMenuItem(value: 'Recebido', child: Text('Recebido')),
-      DropdownMenuItem(value: 'Falta Receber', child: Text('Falta Receber')),
-    ];
-  }
-
-  List<DropdownMenuItem<String>> getAnoOptions() {
-    return const [
-      DropdownMenuItem(value: '', child: Text('Todos os anos')),
-      DropdownMenuItem(value: '2023', child: Text('2023')),
-      DropdownMenuItem(value: '2024', child: Text('2024')),
-      DropdownMenuItem(value: '2025', child: Text('2025')),
-      DropdownMenuItem(value: '2026', child: Text('2026')),
-    ];
-  }
-
-  List<DropdownMenuItem<String>> getMesOptions() {
-    return const [
-      DropdownMenuItem(value: '', child: Text('Todos os mêses')),
-      DropdownMenuItem(value: '01', child: Text('Janeiro')),
-      DropdownMenuItem(value: '02', child: Text('Fevereiro')),
-      DropdownMenuItem(value: '03', child: Text('Março')),
-      DropdownMenuItem(value: '04', child: Text('Abril')),
-      DropdownMenuItem(value: '05', child: Text('Maio')),
-      DropdownMenuItem(value: '06', child: Text('Junho')),
-      DropdownMenuItem(value: '07', child: Text('Julho')),
-      DropdownMenuItem(value: '08', child: Text('Agosto')),
-      DropdownMenuItem(value: '09', child: Text('Setembro')),
-      DropdownMenuItem(value: '10', child: Text('Outubro')),
-      DropdownMenuItem(value: '11', child: Text('Novembro')),
-      DropdownMenuItem(value: '12', child: Text('Dezembro')),
-    ];
   }
 
   @override
@@ -139,7 +102,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   padding: const EdgeInsets.all(16),
                   child: DropdownButtonFormField<String>(
                     value: anoSelecionado,
-                    items: getAnoOptions(),
+                    items: ComunsService().getAnoOptions(),
                     onChanged: (value) {
                       setState(() {
                         anoSelecionado = value;
@@ -156,7 +119,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   padding: const EdgeInsets.all(16),
                   child: DropdownButtonFormField<String>(
                     value: mesSelecionado,
-                    items: getMesOptions(),
+                    items: ComunsService().getMesOptions(),
                     onChanged: (value) {
                       setState(() {
                         mesSelecionado = value;
@@ -176,7 +139,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       padding: const EdgeInsets.all(16),
                       child: DropdownButtonFormField<String>(
                         value: pagamentoSelecionado,
-                        items: getPagamentoOptions(),
+                        items: ComunsService().getPagamentoOptions(),
                         onChanged: (value) {
                           setState(() {
                             pagamentoSelecionado = value;

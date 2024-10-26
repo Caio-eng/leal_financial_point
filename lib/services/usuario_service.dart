@@ -21,4 +21,34 @@ class UsuarioService {
     }
     return null; // Retorna nulo se o usuário não existir ou houver um erro
   }
+
+  Stream<QuerySnapshot> findAllUsers(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isNotEqualTo: userId)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> findAllUsersTypeAdmin(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isNotEqualTo: userId)
+        .where('typeUser', isEqualTo: 'ADMIN')
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> findAllUsersTypeUser(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isNotEqualTo: userId)
+        .where('typeUser', isEqualTo: 'USER')
+        .snapshots();
+  }
+
+  void updateTypeUser(String userId, String typeUser) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .update({'typeUser': typeUser});
+  }
 }

@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:leal_apontar/components/show_custom_alert_dialog.dart';
 import 'package:leal_apontar/screen/cotacao_screen/cotacao_screen.dart';
 import 'package:leal_apontar/screen/fiancial_screen/financial_box_screen.dart';
+import 'package:leal_apontar/screen/perfil_screen/users_screen.dart';
 
 import '../screen/home_screen.dart';
 import '../screen/login_screen/login_screen.dart';
@@ -93,6 +94,16 @@ class _MenuState extends State<Menu> {
                       builder: (context) => HomeScreen(user: widget.user)));
             },
           ),
+          perfilExistente == true && typeUser == 'SUPER_ADMIN' ? ListTile(
+            leading: const Icon(Icons.person),
+            title: const Text('Usuários'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => UsersScreen(user: widget.user)));
+            },
+          ) : Container(),
           perfilExistente == true && typeUser == 'SUPER_ADMIN' ? ListTile(
             leading: const Icon(Icons.attach_money),
             title: const Text('Cotação'),
