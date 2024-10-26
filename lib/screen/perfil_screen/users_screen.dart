@@ -110,7 +110,7 @@ class _UsersScreenState extends State<UsersScreen> {
                               });
                             },
                           ),
-                          const Text('Administradores'),
+                          const Text('Admins'),
                         ],
                       ),
                       Row(
@@ -190,6 +190,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       final usuario = usuarios[index];
                       return GestureDetector(
                         onTap: () {
+                          typeUserSelecionado = usuario.typeUser!;
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
