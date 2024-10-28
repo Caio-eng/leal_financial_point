@@ -1,11 +1,11 @@
 {
-    "name": "leal_apontar",
-    "short_name": "leal_apontar",
+    "name": "Leal Financial",
+    "short_name": "Leal Financial",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "App de apontar horas a fim de aprendizado",
+    "description": "App para controle financeiro",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
