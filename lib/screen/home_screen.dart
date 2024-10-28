@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             const ListTile(
                               leading: Icon(Icons.warning),
                               title:  Text('Sua Conta foi Desativada!'),
-                              subtitle: Text('Entre em contato com o administrador do sistema, para reativá-la'),
+                              subtitle: Text('Entre em contato com o administrador do sistema, para reativá-la.'),
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -121,15 +121,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 TextButton(
                                   child: const Text('Entrar em Contato',),
                                   onPressed: () async {
-                                    const phoneNumber = '55(62) 99141-7406';
                                     final url = Uri.parse(
-                                        'https://api.whatsapp.com/send?phone=$phoneNumber&text=Olá! Estou com perfil inativo, quero reativa-lo!');
+                                      'https://api.whatsapp.com/send?phone=5562991417406&text=${Uri.encodeComponent(
+                                              'Olá! Estou com perfil inativo, quero reativa-lo!\nEmail: ${widget.user.email}')}',
+                                    );
 
                                     if (await canLaunchUrl(url)) {
-                                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                                      await launchUrl(url, mode: LaunchMode.externalApplication);
                                     } else {
-                                    customSnackBar(context, 'Não foi possível abrir o WhatsApp',
-                                    backgroundColor: Colors.red);
+                                      customSnackBar(context, 'Não foi possível abrir o WhatsApp',
+                                          backgroundColor: Colors.red);
                                     }
                                   },
                                 ),
