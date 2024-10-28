@@ -340,16 +340,31 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
           'cpf': _cpfController.text.trim(),
           'telefone': _telefoneController.text.trim(),
           'dataNascimento': _dataNascimentoController.text.trim(),
+          'typeUser' : '',
+          'isAtivo': true
         };
 
         await AuthService().atualizarImagem(urlImagem: photoUrl);
 
         await AuthService().atualizarNome(nome: _nomeController.text);
 
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(widget.user.uid)
-            .set(userProfileData);
+        if (isUpdating == false) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.user.uid)
+              .set(userProfileData);
+        } else {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(widget.user.uid)
+              .update({
+                'nome': _nomeController.text.trim(),
+                'email': _emailController.text.trim(),
+                'cpf': _cpfController.text.trim(),
+                'telefone': _telefoneController.text.trim(),
+                'dataNascimento': _dataNascimentoController.text.trim(),
+              });
+        }
 
         customSnackBar(
           context,

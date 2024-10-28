@@ -9,6 +9,7 @@ class CustomCardItem extends StatelessWidget {
     required this.subtitle,
     required this.owner,
     this.onOptionSelected,
+    this.color, // Novo parâmetro opcional de cor
   });
 
   final String? imageUrl;
@@ -17,6 +18,7 @@ class CustomCardItem extends StatelessWidget {
   final String subtitle;
   final String owner;
   final Function(String)? onOptionSelected;
+  final Color? color; // Cor opcional do card
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +28,7 @@ class CustomCardItem extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
+      color: color ?? Colors.white, // Define a cor do card, usando branca como padrão
       child: Padding(
         padding: const EdgeInsets.all(15.0),
         child: Row(
@@ -53,9 +56,8 @@ class CustomCardItem extends StatelessWidget {
                         PopupMenuButton<String>(
                           onSelected: onOptionSelected,
                           itemBuilder: (BuildContext context) {
-                            // Gera a lista de opções, adicionando "Download" se onDownloadPressed não for nulo
-                            final options = <String>[];
-                            options.addAll(['Comprovante', 'Editar', 'Excluir', 'Copiar registro']);
+                            // Gera a lista de opções
+                            final options = <String>['Comprovante', 'Editar', 'Excluir', 'Copiar registro'];
                             return options.map((String choice) {
                               return PopupMenuItem<String>(
                                 value: choice,

@@ -24,6 +24,7 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   bool perfilExistente = false; // Variável para armazenar se o perfil existe
   User? user;
+  bool isAtivo = true;
   var nome;
   var photoUrl;
   var typeUser;
@@ -55,6 +56,7 @@ class _MenuState extends State<Menu> {
       if (userProfileSnapshot.exists) {
         Map<String, dynamic> userProfileData = userProfileSnapshot.data() as Map<String, dynamic>;
         typeUser = userProfileData['typeUser'];
+        isAtivo = userProfileData['isAtivo'];
 
         setState(() {
           perfilExistente = true;
@@ -114,7 +116,7 @@ class _MenuState extends State<Menu> {
                       builder: (context) => CotacaoScreen(user: widget.user)));
             },
           ) : Container(),
-          perfilExistente == true ? ListTile(
+          perfilExistente == true && isAtivo == true && typeUser != '' ? ListTile(
             leading: const Icon(Icons.monetization_on),
             title: const Text('Lançamentos de Caixa'),
             onTap: () {

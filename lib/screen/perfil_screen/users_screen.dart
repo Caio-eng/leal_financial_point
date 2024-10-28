@@ -25,6 +25,7 @@ class _UsersScreenState extends State<UsersScreen> {
   late List<Usuario> usuarios = [];
   String typeUserSelecionado = '';
   String typeNivelSelecionado = '';
+  bool typeActiveSelecionado = true;
   final _formKey = GlobalKey<FormState>();
   final typeUserController = TextEditingController();
 
@@ -168,10 +169,12 @@ class _UsersScreenState extends State<UsersScreen> {
                       usuario.telefone.toLowerCase();
                       final typeUser =
                       usuario.typeUser!.toLowerCase();
+                      final isAtivo = usuario.isAtivo!.toString().toLowerCase();
                       return nome.contains(searchQuery) ||
                           email.contains(searchQuery) ||
                           telefone.contains(searchQuery) ||
-                          typeUser.contains(searchQuery);
+                          typeUser.contains(searchQuery) ||
+                          isAtivo.contains(searchQuery);
                     }).toList();
                   }
 
@@ -191,32 +194,46 @@ class _UsersScreenState extends State<UsersScreen> {
                       return GestureDetector(
                         onTap: () {
                           typeNivelSelecionado = usuario.typeUser!;
+                          typeActiveSelecionado = usuario.isAtivo!;
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: const Center(child: Text('Nível de Acesso')),
+                                title: const Center(child: Text('Configuração do Usuário')),
                                 content: SingleChildScrollView(
                                   padding: const EdgeInsets.all(16.0),
-                                  child: Form(
-                                    key: _formKey,
-                                    child: DropdownButtonFormField<String>(
-                                      value: typeNivelSelecionado,
-                                      items: ComunsService().getTypeUserOptions(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          typeNivelSelecionado = value!;
-                                        });
-                                      },
-                                      decoration: CustomInputDecoration.build(
-                                        labelText: 'Selecione o Nível de acesso',
+                                  child: SingleChildScrollView(
+                                    child: Form(
+                                      key: _formKey,
+                                      child: Column(
+                                        children: [
+                                          DropdownButtonFormField<String>(
+                                            value: typeNivelSelecionado,
+                                            items: ComunsService().getTypeUserOptions(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                typeNivelSelecionado = value!;
+                                              });
+                                            },
+                                            decoration: CustomInputDecoration.build(
+                                              labelText: 'Selecione o Nível de acesso',
+                                            ),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          DropdownButtonFormField<bool>(
+                                            value: typeActiveSelecionado,
+                                            items: ComunsService().getTypeActiveOptions(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                typeActiveSelecionado = value!;
+                                              });
+                                            },
+                                            decoration: CustomInputDecoration.build(
+                                              labelText: 'Ativar ou Inativar o Usuário',
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      validator: (value) {
-                                        if (value == null) {
-                                          return 'Por favor, selecione o nível de acesso';
-                                        }
-                                        return null;
-                                      },
                                     ),
                                   ),
                                 ),
@@ -233,8 +250,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                       TextButton(
                                         onPressed: () async {
                                           if (_formKey.currentState!.validate()) {
-                                            UsuarioService().updateTypeUser(usuario.uid, typeNivelSelecionado);
-                                            customSnackBar(context, "Nível de acesso alterado com sucesso!",
+                                            UsuarioService().updateTypeUser(usuario.uid, typeNivelSelecionado, typeActiveSelecionado);
+                                            customSnackBar(context, "Configuração do Usuário alterado com sucesso!",
                                                 backgroundColor: Colors.green);
                                             Navigator.of(context).pop();  // Fechar o diálogo
                                           }
@@ -253,11 +270,12 @@ class _UsersScreenState extends State<UsersScreen> {
                           usuario.nome,
                           subtitle: 'Email: ${usuario.email}',
                           icon: Icons.person,
+                          color: typeActiveSelecionado == false ? Colors.red : Colors.white,
                           owner: 'Pepel: '
                               '${usuario.typeUser == null || usuario.typeUser == '' ?
                               'Nenhum'
                               : usuario.typeUser == 'ADMIN' ? 'Administrador'
-                              : usuario.typeUser == 'SUPER_ADMIN' ? 'Super Administrador' : 'Usuário'}',
+                              : usuario.typeUser == 'SUPER_ADMIN' ? 'Super Administrador' : 'Usuário'}\nStatus: ${typeActiveSelecionado == false ? 'Inativo' : 'Ativo'}',
                         ),
                       );
                     },

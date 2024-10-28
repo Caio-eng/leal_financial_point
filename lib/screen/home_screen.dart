@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../components/custom_snack_bar.dart';
 import '../components/menu.dart';
 import '../services/usuario_service.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   final User user;
@@ -18,6 +20,8 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   var id;
   var name;
+  bool perfilCompleto = true;
+  bool isAtivo = true;
 
   @override
   void initState() {
@@ -31,9 +35,12 @@ class _HomeScreenState extends State<HomeScreen> {
     if (userData != null) {
       name = widget.user.displayName;
       id = userData['uid'];
+      isAtivo = userData['isAtivo'];
+      perfilCompleto = true;
       setState(() {});
     } else {
-      print('Erro ao recuperar os dados do usuário');
+      perfilCompleto = false;
+      setState(() {});
     }
   }
 
@@ -85,6 +92,52 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   textAlign: TextAlign.center,
                 ),
+                perfilCompleto == false ? const SizedBox(height: 20) : const SizedBox(),
+                perfilCompleto == false ?
+                const Card(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ListTile(
+                        leading: Icon(Icons.warning),
+                        title:  Text('Para usar a aplicação necessita completar o perfil!'),
+                        subtitle: Text('Entre em contato com o administrador do sistema'),
+                      ),
+                    ],
+                  ),
+                ): isAtivo == false
+                    ? Card(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const ListTile(
+                              leading: Icon(Icons.warning),
+                              title:  Text('Sua Conta foi Desativada!'),
+                              subtitle: Text('Entre em contato com o administrador do sistema, para reativá-la'),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  child: const Text('Entrar em Contato',),
+                                  onPressed: () async {
+                                    const phoneNumber = '55(62) 99141-7406';
+                                    final url = Uri.parse(
+                                        'https://api.whatsapp.com/send?phone=$phoneNumber&text=Olá! Estou com perfil inativo, quero reativa-lo!');
+
+                                    if (await canLaunchUrl(url)) {
+                                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                                    } else {
+                                    customSnackBar(context, 'Não foi possível abrir o WhatsApp',
+                                    backgroundColor: Colors.red);
+                                    }
+                                  },
+                                ),
+                              ],
+                            )
+                          ],
+                        ),
+                      ): Container(),
               ],
             ),
           ),

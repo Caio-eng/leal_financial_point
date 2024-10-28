@@ -80,4 +80,11 @@ class ComunsService {
       DropdownMenuItem(value: 'USER', child: Text('Usuário')),
     ];
   }
+
+  List<DropdownMenuItem<bool>> getTypeActiveOptions() {
+    return const [
+      DropdownMenuItem(value: true, child: Text('Ativo')),
+      DropdownMenuItem(value: false, child: Text('Inativo')),
+    ];
+  }
 }
