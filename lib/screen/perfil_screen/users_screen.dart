@@ -270,12 +270,12 @@ class _UsersScreenState extends State<UsersScreen> {
                           usuario.nome,
                           subtitle: 'Email: ${usuario.email}',
                           icon: Icons.person,
-                          color: typeActiveSelecionado == false ? Colors.red : Colors.white,
+                          color: usuario.isAtivo == false ? Colors.red : Colors.white,
                           owner: 'Pepel: '
                               '${usuario.typeUser == null || usuario.typeUser == '' ?
                               'Nenhum'
                               : usuario.typeUser == 'ADMIN' ? 'Administrador'
-                              : usuario.typeUser == 'SUPER_ADMIN' ? 'Super Administrador' : 'Usuário'}\nStatus: ${typeActiveSelecionado == false ? 'Inativo' : 'Ativo'}',
+                              : usuario.typeUser == 'SUPER_ADMIN' ? 'Super Administrador' : 'Usuário'}\nStatus: ${usuario.isAtivo == false ? 'Inativo' : 'Ativo'}',
                         ),
                       );
                     },
