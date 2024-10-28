@@ -116,7 +116,7 @@ class _MenuState extends State<Menu> {
                       builder: (context) => CotacaoScreen(user: widget.user)));
             },
           ) : Container(),
-          perfilExistente == true && isAtivo == true && typeUser != '' ? ListTile(
+          perfilExistente == true && isAtivo == true ? ListTile(
             leading: const Icon(Icons.monetization_on),
             title: const Text('Lançamentos de Caixa'),
             onTap: () {
