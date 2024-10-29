@@ -217,7 +217,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                               });
                                             },
                                             decoration: CustomInputDecoration.build(
-                                              labelText: 'Selecione o Nível de acesso',
+                                              labelText: 'Nível de acesso',
                                             ),
                                           ),
                                           const SizedBox(height: 16),
@@ -243,7 +243,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                               });
                                             },
                                             decoration: CustomInputDecoration.build(
-                                              labelText: 'Selecione o Tipo de Conta',
+                                              labelText: 'Tipo de Conta',
                                             ),
                                           ),
                                         ],
