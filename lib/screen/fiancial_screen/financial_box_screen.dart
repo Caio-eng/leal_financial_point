@@ -150,6 +150,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                         UsuarioService().updateTypeAccountUser(widget.user.uid, typeAccount);
                         saldoCalculado = false;
                         saldoAtual = 0;
+                        financialBoxs = [];
                         customSnackBar(
                           context,
                           typeAccount == 'Pessoal'
