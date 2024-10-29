@@ -14,6 +14,7 @@ import 'dart:html' as html; // Import necessário para downloads na web
 
 import '../../components/custom_input_decoration.dart';
 import '../../components/custom_snack_bar.dart';
+import '../../services/comuns_service.dart';
 import '../../services/firebase_auth.dart';
 import '../home_screen.dart';
 
@@ -41,6 +42,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
   User? user;
   String? photoUrl;
   Uint8List? _imageBytes;
+  String? typeAccount;
 
   @override
   void initState() {
@@ -67,6 +69,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
         _cpfController.text = userProfileData['cpf'] ?? '';
         _telefoneController.text = userProfileData['telefone'] ?? '';
         _dataNascimentoController.text = userProfileData['dataNascimento'] ?? '';
+        typeAccount = userProfileData['typeAccount'];
 
         setState(() {
           isUpdating = true;
@@ -303,6 +306,25 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: typeAccount,
+                items: ComunsService().getTypeAccountOptions(),
+                onChanged: (value) {
+                  setState(() {
+                    typeAccount = value!;
+                  });
+                },
+                decoration: CustomInputDecoration.build(
+                  labelText: 'Selecione o Tipo de Conta',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tipo de conta é obrigatório';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -341,7 +363,8 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
           'telefone': _telefoneController.text.trim(),
           'dataNascimento': _dataNascimentoController.text.trim(),
           'typeUser' : '',
-          'isAtivo': true
+          'isAtivo': true,
+          'typeAccount': typeAccount,
         };
 
         await AuthService().atualizarImagem(urlImagem: photoUrl);
@@ -363,6 +386,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                 'cpf': _cpfController.text.trim(),
                 'telefone': _telefoneController.text.trim(),
                 'dataNascimento': _dataNascimentoController.text.trim(),
+                'typeAccount' : typeAccount ?? '',
               });
         }
 

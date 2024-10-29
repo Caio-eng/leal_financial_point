@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:leal_apontar/services/comuns_service.dart';
 import 'package:leal_apontar/services/financial_box_service.dart';
+import 'package:leal_apontar/services/usuario_service.dart';
 
 import '../../components/currency_text_input_formatter.dart';
 import '../../components/custom_input_decoration.dart';
@@ -34,11 +35,19 @@ class _FinancialBoxRegisterScreenState
   late String idFinancialBox = '';
   String valorSomatorioFormatado = '';
   bool showTextField = false;
+  User? user;
+  String typeAccount = '';
 
   @override
   void initState() {
     super.initState();
     _recoverFinancialBox();
+    _loadUserInfo();
+  }
+
+  void _loadUserInfo() async {
+    typeAccount = await UsuarioService().getTypeAccount(widget.user.uid);
+    setState(() {});
   }
 
   Future<void> _recoverFinancialBox() async {
@@ -136,9 +145,9 @@ class _FinancialBoxRegisterScreenState
                     DropdownButtonFormField<String>(
                       value: tipoEntradaSaidaSelecionado,
                       items: tipoCaixaSelecionado == 'Entrada'
-                          ? ComunsService().getEntradaOptions()
+                          ? typeAccount == 'Pessoal' ? ComunsService().getEntradaPessoalOptions() : ComunsService().getEntradaOptions()
                           : tipoCaixaSelecionado == 'Saída'
-                              ? ComunsService().getSaidaOptions()
+                              ? typeAccount == 'Pessoal' ? ComunsService().getSaidaPessoalOptions() : ComunsService().getSaidaOptions()
                               : [],
                       onChanged: (value) {
                         setState(() {
