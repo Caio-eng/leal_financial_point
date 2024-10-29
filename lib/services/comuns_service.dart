@@ -4,7 +4,7 @@ class ComunsService {
 
   List<DropdownMenuItem<String>> getEntradaOptions() {
     return const [
-      DropdownMenuItem(value: 'Dizimo', child: Text('Dízimo')),
+      DropdownMenuItem(value: 'Dízimo', child: Text('Dízimo')),
       DropdownMenuItem(value: 'Oferta', child: Text('Oferta')),
       DropdownMenuItem(value: 'Outros', child: Text('Outros')),
     ];
@@ -14,6 +14,22 @@ class ComunsService {
     return const [
       DropdownMenuItem(value: 'Compras', child: Text('Compras')),
       DropdownMenuItem(value: 'Despesas', child: Text('Despesas Gerais')),
+      DropdownMenuItem(value: 'Outros', child: Text('Outros')),
+    ];
+  }
+
+  List<DropdownMenuItem<String>> getEntradaPessoalOptions() {
+    return const [
+      DropdownMenuItem(value: 'Salário', child: Text('Salário')),
+      DropdownMenuItem(value: 'Renda Extra', child: Text('Renda Extra')),
+      DropdownMenuItem(value: 'Outros', child: Text('Outros')),
+    ];
+  }
+
+  List<DropdownMenuItem<String>> getSaidaPessoalOptions() {
+    return const [
+      DropdownMenuItem(value: 'Compras', child: Text('Compras')),
+      DropdownMenuItem(value: 'Gastos Fixo', child: Text('Gastos Fixo')),
       DropdownMenuItem(value: 'Outros', child: Text('Outros')),
     ];
   }
@@ -85,6 +101,14 @@ class ComunsService {
     return const [
       DropdownMenuItem(value: true, child: Text('Ativo')),
       DropdownMenuItem(value: false, child: Text('Inativo')),
+    ];
+  }
+
+  List<DropdownMenuItem<String>> getTypeAccountOptions() {
+    return const [
+      DropdownMenuItem(value: '', child: Text('Nenhum')),
+      DropdownMenuItem(value: 'Pessoal', child: Text('Pessoal')),
+      DropdownMenuItem(value: 'Comercial', child: Text('Comercial')),
     ];
   }
 }

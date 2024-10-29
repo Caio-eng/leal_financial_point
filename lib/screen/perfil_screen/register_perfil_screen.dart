@@ -41,6 +41,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
   User? user;
   String? photoUrl;
   Uint8List? _imageBytes;
+  String? typeAccount;
 
   @override
   void initState() {
@@ -67,6 +68,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
         _cpfController.text = userProfileData['cpf'] ?? '';
         _telefoneController.text = userProfileData['telefone'] ?? '';
         _dataNascimentoController.text = userProfileData['dataNascimento'] ?? '';
+        typeAccount = userProfileData['typeAccount'];
 
         setState(() {
           isUpdating = true;
@@ -341,7 +343,8 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
           'telefone': _telefoneController.text.trim(),
           'dataNascimento': _dataNascimentoController.text.trim(),
           'typeUser' : '',
-          'isAtivo': true
+          'isAtivo': true,
+          'typeAccount': 'Pessoal',
         };
 
         await AuthService().atualizarImagem(urlImagem: photoUrl);
@@ -363,6 +366,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                 'cpf': _cpfController.text.trim(),
                 'telefone': _telefoneController.text.trim(),
                 'dataNascimento': _dataNascimentoController.text.trim(),
+                'typeAccount' : typeAccount ?? '',
               });
         }
 

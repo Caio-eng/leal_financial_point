@@ -26,6 +26,7 @@ class _UsersScreenState extends State<UsersScreen> {
   String typeUserSelecionado = '';
   String typeNivelSelecionado = '';
   bool typeActiveSelecionado = true;
+  String typeAccountSelecionado = '';
   final _formKey = GlobalKey<FormState>();
   final typeUserController = TextEditingController();
 
@@ -33,7 +34,6 @@ class _UsersScreenState extends State<UsersScreen> {
   void initState() {
     super.initState();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +195,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         onTap: () {
                           typeNivelSelecionado = usuario.typeUser!;
                           typeActiveSelecionado = usuario.isAtivo!;
+                          typeAccountSelecionado = usuario.typeAccount!;
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -232,6 +233,19 @@ class _UsersScreenState extends State<UsersScreen> {
                                               labelText: 'Ativar ou Inativar o Usuário',
                                             ),
                                           ),
+                                          const SizedBox(height: 16),
+                                          DropdownButtonFormField<String>(
+                                            value: typeAccountSelecionado,
+                                            items: ComunsService().getTypeAccountOptions(),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                typeAccountSelecionado = value!;
+                                              });
+                                            },
+                                            decoration: CustomInputDecoration.build(
+                                              labelText: 'Selecione o Tipo de Conta',
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -250,7 +264,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                       TextButton(
                                         onPressed: () async {
                                           if (_formKey.currentState!.validate()) {
-                                            UsuarioService().updateTypeUser(usuario.uid, typeNivelSelecionado, typeActiveSelecionado);
+                                            UsuarioService().updateTypeUser(usuario.uid, typeNivelSelecionado, typeActiveSelecionado, typeAccountSelecionado);
                                             customSnackBar(context, "Configuração do Usuário alterado com sucesso!",
                                                 backgroundColor: Colors.green);
                                             Navigator.of(context).pop();  // Fechar o diálogo
@@ -268,7 +282,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         child: CustomCardItem(
                           title:
                           usuario.nome,
-                          subtitle: 'Email: ${usuario.email}',
+                          subtitle: 'Email: ${usuario.email}\nTipo de Conta: ${usuario.typeAccount == null || usuario.typeAccount == '' ? 'Nenhum' : usuario.typeAccount}\nTelefone: ${usuario.telefone}',
                           icon: Icons.person,
                           color: usuario.isAtivo == false ? Colors.red : Colors.white,
                           owner: 'Pepel: '

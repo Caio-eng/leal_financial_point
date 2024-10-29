@@ -34,11 +34,33 @@ class _FinancialBoxRegisterScreenState
   late String idFinancialBox = '';
   String valorSomatorioFormatado = '';
   bool showTextField = false;
+  User? user;
+  String typeAccount = '';
 
   @override
   void initState() {
     super.initState();
     _recoverFinancialBox();
+    _loadUserInfo();
+  }
+
+  void _loadUserInfo() async {
+    user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      DocumentSnapshot userProfileSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .get();
+
+      if (userProfileSnapshot.exists) {
+        Map<String, dynamic> userProfileData = userProfileSnapshot
+            .data() as Map<String, dynamic>;
+
+        typeAccount = userProfileData['typeAccount'];
+        setState(() {});
+      }
+    }
   }
 
   Future<void> _recoverFinancialBox() async {
@@ -136,9 +158,9 @@ class _FinancialBoxRegisterScreenState
                     DropdownButtonFormField<String>(
                       value: tipoEntradaSaidaSelecionado,
                       items: tipoCaixaSelecionado == 'Entrada'
-                          ? ComunsService().getEntradaOptions()
+                          ? typeAccount == 'Pessoal' ? ComunsService().getEntradaPessoalOptions() : ComunsService().getEntradaOptions()
                           : tipoCaixaSelecionado == 'Saída'
-                              ? ComunsService().getSaidaOptions()
+                              ? typeAccount == 'Pessoal' ? ComunsService().getSaidaPessoalOptions() : ComunsService().getSaidaOptions()
                               : [],
                       onChanged: (value) {
                         setState(() {

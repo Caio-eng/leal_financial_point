@@ -45,10 +45,18 @@ class UsuarioService {
         .snapshots();
   }
 
-  void updateTypeUser(String userId, String typeUser, bool isAtivo) async {
+  Stream<QuerySnapshot> findByUserTypeAccount(String userId) {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isEqualTo: userId)
+        .where('typeAccount', isEqualTo: 'Pessoal')
+        .snapshots();
+  }
+
+  void updateTypeUser(String userId, String typeUser, bool isAtivo, String typeAccount) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
-        .update({'typeUser': typeUser, 'isAtivo': isAtivo});
+        .update({'typeUser': typeUser, 'isAtivo': isAtivo, 'typeAccount': typeAccount});
   }
 }

@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:leal_apontar/model/financial_box.dart';
-import 'package:pdf/src/widgets/document.dart';
 
 class FinancialBoxService {
 
