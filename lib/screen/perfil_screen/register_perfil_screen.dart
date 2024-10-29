@@ -14,6 +14,7 @@ import 'dart:html' as html; // Import necessário para downloads na web
 
 import '../../components/custom_input_decoration.dart';
 import '../../components/custom_snack_bar.dart';
+import '../../services/comuns_service.dart';
 import '../../services/firebase_auth.dart';
 import '../home_screen.dart';
 
@@ -305,6 +306,25 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              DropdownButtonFormField<String>(
+                value: typeAccount,
+                items: ComunsService().getTypeAccountOptions(),
+                onChanged: (value) {
+                  setState(() {
+                    typeAccount = value!;
+                  });
+                },
+                decoration: CustomInputDecoration.build(
+                  labelText: 'Selecione o Tipo de Conta',
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Tipo de conta é obrigatório';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -344,7 +364,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
           'dataNascimento': _dataNascimentoController.text.trim(),
           'typeUser' : '',
           'isAtivo': true,
-          'typeAccount': 'Pessoal',
+          'typeAccount': typeAccount,
         };
 
         await AuthService().atualizarImagem(urlImagem: photoUrl);

@@ -45,12 +45,28 @@ class UsuarioService {
         .snapshots();
   }
 
-  Stream<QuerySnapshot> findByUserTypeAccount(String userId) {
-    return FirebaseFirestore.instance
-        .collection('users')
-        .where('uid', isEqualTo: userId)
-        .where('typeAccount', isEqualTo: 'Pessoal')
-        .snapshots();
+  Future<String> getTypeAccount(String userId) async {
+    try {
+      // Obtém o documento do perfil do usuário com base no ID
+      DocumentSnapshot userProfileSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userProfileSnapshot.exists) {
+        Map<String, dynamic> userProfileData =
+        userProfileSnapshot.data() as Map<String, dynamic>;
+        String typeAccount = userProfileData['typeAccount'] ?? '';
+
+        // Retorna o valor de 'typeAccount'
+        return typeAccount;
+      } else {
+        return '';
+      }
+    } catch (e) {
+      print('Erro ao obter o tipo de conta: $e');
+      return '';
+    }
   }
 
   void updateTypeUser(String userId, String typeUser, bool isAtivo, String typeAccount) async {
@@ -58,5 +74,12 @@ class UsuarioService {
         .collection('users')
         .doc(userId)
         .update({'typeUser': typeUser, 'isAtivo': isAtivo, 'typeAccount': typeAccount});
+  }
+
+  void updateTypeAccountUser(String userId, String typeAccount) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .update({'typeAccount': typeAccount});
   }
 }

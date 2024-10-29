@@ -106,7 +106,6 @@ class ComunsService {
 
   List<DropdownMenuItem<String>> getTypeAccountOptions() {
     return const [
-      DropdownMenuItem(value: '', child: Text('Nenhum')),
       DropdownMenuItem(value: 'Pessoal', child: Text('Pessoal')),
       DropdownMenuItem(value: 'Comercial', child: Text('Comercial')),
     ];

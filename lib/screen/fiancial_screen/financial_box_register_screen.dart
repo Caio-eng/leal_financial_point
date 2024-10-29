@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:leal_apontar/model/financial_box.dart';
 import 'package:leal_apontar/services/comuns_service.dart';
 import 'package:leal_apontar/services/financial_box_service.dart';
+import 'package:leal_apontar/services/usuario_service.dart';
 
 import '../../components/currency_text_input_formatter.dart';
 import '../../components/custom_input_decoration.dart';
@@ -45,22 +46,8 @@ class _FinancialBoxRegisterScreenState
   }
 
   void _loadUserInfo() async {
-    user = FirebaseAuth.instance.currentUser;
-
-    if (user != null) {
-      DocumentSnapshot userProfileSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user!.uid)
-          .get();
-
-      if (userProfileSnapshot.exists) {
-        Map<String, dynamic> userProfileData = userProfileSnapshot
-            .data() as Map<String, dynamic>;
-
-        typeAccount = userProfileData['typeAccount'];
-        setState(() {});
-      }
-    }
+    typeAccount = await UsuarioService().getTypeAccount(widget.user.uid);
+    setState(() {});
   }
 
   Future<void> _recoverFinancialBox() async {

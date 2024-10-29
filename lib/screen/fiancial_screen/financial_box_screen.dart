@@ -11,6 +11,7 @@ import 'package:leal_apontar/screen/fiancial_screen/financial_box_register_scree
 import 'package:leal_apontar/services/comuns_service.dart';
 import 'package:leal_apontar/services/financial_box_service.dart';
 import 'package:leal_apontar/services/financial_report_service.dart';
+import 'package:leal_apontar/services/usuario_service.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../components/custom_Input_decoration.dart';
@@ -37,11 +38,18 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   String? pagamentoSelecionado = '';
   bool? ordemData = true;
   late List<FinancialBox> financialBoxs = [];
+  String typeAccount = 'Pessoal';
 
   @override
   void initState() {
     super.initState();
     atualizarAnoEMesSelecionados();
+    _loadUserInfo();
+  }
+
+  void _loadUserInfo() async {
+    typeAccount = await UsuarioService().getTypeAccount(widget.user.uid);
+    setState(() {});
   }
 
   void atualizarAnoEMesSelecionados() {
@@ -128,6 +136,32 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     },
                     decoration: CustomInputDecoration.build(
                       labelText: 'Filtro pelo Mês',
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: DropdownButtonFormField<String>(
+                    value: typeAccount,
+                    items: ComunsService().getTypeAccountOptions(),
+                    onChanged: (value) {
+                      setState(() {
+                        typeAccount = value!;
+                        UsuarioService().updateTypeAccountUser(widget.user.uid, typeAccount);
+                        saldoCalculado = false;
+                        saldoAtual = 0;
+                        customSnackBar(
+                          context,
+                          typeAccount == 'Pessoal'
+                              ? 'Perfil modificado para conta $typeAccount!'
+                              : 'Perfil modificado para conta $typeAccount!',
+                          backgroundColor: Colors.green,
+                        );
+                        setState(() {});
+                      });
+                    },
+                    decoration: CustomInputDecoration.build(
+                      labelText: 'Trocar Conta',
                     ),
                   ),
                 ),
