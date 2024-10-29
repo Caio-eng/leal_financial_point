@@ -282,7 +282,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         child: CustomCardItem(
                           title:
                           usuario.nome,
-                          subtitle: 'Email: ${usuario.email}\nTipo de Conta: ${usuario.typeAccount == null || usuario.typeAccount == '' ? 'Nenhum' : usuario.typeAccount}\nTelefone: ${usuario.telefone}',
+                          subtitle: 'Email: ${usuario.email}\nTipo de Conta: ${usuario.typeAccount == null || usuario.typeAccount == '' ? 'Nenhum' : usuario.typeAccount}',
                           icon: Icons.person,
                           color: usuario.isAtivo == false ? Colors.red : Colors.white,
                           owner: 'Pepel: '
