@@ -69,11 +69,11 @@ class UsuarioService {
     }
   }
 
-  void updateTypeUser(String userId, String typeUser, bool isAtivo, String typeAccount) async {
+  void updateTypeUser(String userId, String typeUser, bool isAtivo) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
-        .update({'typeUser': typeUser, 'isAtivo': isAtivo, 'typeAccount': typeAccount});
+        .update({'typeUser': typeUser, 'isAtivo': isAtivo});
   }
 
   void updateTypeAccountUser(String userId, String typeAccount) async {
