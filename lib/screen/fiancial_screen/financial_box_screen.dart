@@ -179,16 +179,17 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: DropdownButtonFormField<String>(
-                          value: pagamentoSelecionado,
-                          items: ComunsService().getPagamentoOptions(),
+                          value: filtro,
+                          items: ComunsService().getTypeBoxOptions(),
                           onChanged: (value) {
                             setState(() {
-                              pagamentoSelecionado = value;
-                              saldoCalculado = false;
+                              filtro = value!;
+                              saldoCalculado =
+                              false; // Reseta cálculo de saldo ao mudar mês
                             });
                           },
                           decoration: CustomInputDecoration.build(
-                            labelText: 'Filtro pelo Pagamento',
+                            labelText: 'Tipo de Caixa',
                           ),
                         ),
                       ),
@@ -209,23 +210,22 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   ],
                 ),
-                Padding(
+                filtro != 'reservas' ?Padding(
                   padding: const EdgeInsets.all(16),
                   child: DropdownButtonFormField<String>(
-                    value: filtro,
-                    items: ComunsService().getTypeBoxOptions(),
+                    value: pagamentoSelecionado,
+                    items: ComunsService().getPagamentoOptions(),
                     onChanged: (value) {
                       setState(() {
-                        filtro = value!;
-                        saldoCalculado =
-                        false; // Reseta cálculo de saldo ao mudar mês
+                        pagamentoSelecionado = value;
+                        saldoCalculado = false;
                       });
                     },
                     decoration: CustomInputDecoration.build(
-                      labelText: 'Tipo de Caixa',
+                      labelText: 'Filtro pelo Pagamento',
                     ),
                   ),
-                ),
+                ) : Container(),
               ],
             ),
           ),
