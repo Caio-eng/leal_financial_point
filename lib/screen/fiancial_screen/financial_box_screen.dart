@@ -238,7 +238,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   : filtro == 'entradas'
                       ? FinancialBoxService().findMyFinancialBoxEntradas(
                           widget.user.uid, ordemData!)
-                      :  filtro == 'entradas'
+                      :  filtro == 'saidas'
                       ? FinancialBoxService().findMyFinancialBoxSaidas(
                           widget.user.uid, ordemData!)
                       : FinancialBoxService().findMyFinancialBoxReservas(
@@ -476,7 +476,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       onTap: () {
                         if (financialBoxs.isNotEmpty) {
                           FinancialReportService().generateFinancialReport(
-                              financialBoxs, saldoAtual);
+                              financialBoxs, saldoAtual, filtro);
                           customSnackBar(context,
                               'Relatório financeiro gerado com sucesso!');
                         } else {

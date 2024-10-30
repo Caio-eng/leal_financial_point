@@ -102,7 +102,7 @@ class FinancialReportService {
     html.Url.revokeObjectUrl(url);
   }
 
-  void generateFinancialReport(List<FinancialBox> financialBoxes, double saldoAtual) async {
+  void generateFinancialReport(List<FinancialBox> financialBoxes, double saldoAtual, String filtro) async {
     final pdf = pw.Document();
     final dateFormat = DateFormat('dd/MM/yyyy');
 
@@ -266,20 +266,20 @@ class FinancialReportService {
                   pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
                   // Detalhes do saldo
                   pw.Text(
-                    'Saldo Atual',
+                    filtro != 'reservas' ? 'Saldo Atual' : 'Reserva Atual',
                     style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
                   ),
                   pw.Text(
-                    'Com base nos lançamentos realizados, o saldo atual é:',
+                    filtro != 'reservas' ? 'Com base nos lançamentos realizados, o saldo atual é:' : 'Com base nos lançamentos, a reserva atual é:',
                     style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey600),
                   ),
                   pw.SizedBox(height: 10),
                   pw.Text(
-                    'R\$ ${saldoAtual.toStringAsFixed(2)}',
+                    filtro == 'reservas' ? 'R\$ ${(saldoAtual * -1).toStringAsFixed(2)}' : 'R\$ ${saldoAtual.toStringAsFixed(2)}',
                     style: pw.TextStyle(
                       fontSize: 36,
                       fontWeight: pw.FontWeight.bold,
-                      color: saldoAtual > 0 ? PdfColors.green700 : PdfColors.red700,
+                      color: filtro == 'reservas' ? PdfColors.orange700 : saldoAtual > 0 && filtro != 'reservas' ? PdfColors.green700 : PdfColors.red700,
                     ),
                   ),
                   pw.SizedBox(height: 20),
