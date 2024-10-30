@@ -70,7 +70,7 @@ class FinancialReportService {
                         pw.SizedBox(height: 10),
                         pw.Text(
                           'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
-                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.green700),
+                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Entrada' ? PdfColors.green700 : financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.orange700),
                         ),
                       ],
                     ),
@@ -102,7 +102,7 @@ class FinancialReportService {
     html.Url.revokeObjectUrl(url);
   }
 
-  void generateFinancialReport(List<FinancialBox> financialBoxes, double saldoAtual) async {
+  void generateFinancialReport(List<FinancialBox> financialBoxes, double saldoAtual, String filtro) async {
     final pdf = pw.Document();
     final dateFormat = DateFormat('dd/MM/yyyy');
 
@@ -131,7 +131,7 @@ class FinancialReportService {
               itemCount: financialBoxes.length,
               itemBuilder: (context, index) {
                 final financialBox = financialBoxes[index];
-                return financialBox.tipoEntradaSaidaSelecionado != 'Reserva' ? pw.Center(
+                return financialBox.tipoCaixaSelecionado != 'Reserva' ? pw.Center(
                   child: pw.Container(
                     width: double.infinity,
                     padding: const pw.EdgeInsets.all(12),
@@ -199,7 +199,7 @@ class FinancialReportService {
                     pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
                     pw.SizedBox(height: 10),
                     for( FinancialBox financialBox in financialBoxes )
-                      if (financialBox.tipoEntradaSaidaSelecionado == 'Reserva')
+                      if (financialBox.tipoCaixaSelecionado == 'Reserva')
                         pw.Column(
                           children: [
                             pw.Text(
@@ -228,7 +228,7 @@ class FinancialReportService {
                             pw.SizedBox(height: 10),
                             pw.Text(
                               'Valor: ${financialBox.valorItemCaixaController}',
-                              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.green700),
+                              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.orange700),
                             ),
                             pw.SizedBox(height: 10),
                             pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
@@ -266,20 +266,20 @@ class FinancialReportService {
                   pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
                   // Detalhes do saldo
                   pw.Text(
-                    'Saldo Atual',
+                    filtro != 'reservas' ? 'Saldo Atual' : 'Reserva Atual',
                     style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
                   ),
                   pw.Text(
-                    'Com base nos lançamentos realizados, o saldo atual é:',
+                    filtro != 'reservas' ? 'Com base nos lançamentos realizados, o saldo atual é:' : 'Com base nos lançamentos, a reserva atual é:',
                     style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey600),
                   ),
                   pw.SizedBox(height: 10),
                   pw.Text(
-                    'R\$ ${saldoAtual.toStringAsFixed(2)}',
+                    filtro == 'reservas' ? 'R\$ ${(saldoAtual * -1).toStringAsFixed(2)}' : 'R\$ ${saldoAtual.toStringAsFixed(2)}',
                     style: pw.TextStyle(
                       fontSize: 36,
                       fontWeight: pw.FontWeight.bold,
-                      color: saldoAtual > 0 ? PdfColors.green700 : PdfColors.red700,
+                      color: filtro == 'reservas' ? PdfColors.orange700 : saldoAtual > 0 && filtro != 'reservas' ? PdfColors.green700 : PdfColors.red700,
                     ),
                   ),
                   pw.SizedBox(height: 20),

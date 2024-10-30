@@ -121,14 +121,14 @@ class _FinancialBoxRegisterScreenState
                     DropdownButtonFormField<String>(
                       value: tipoCaixaSelecionado,
                       items: const [
-                        DropdownMenuItem(
-                            value: 'Entrada', child: Text('Entrada')),
+                        DropdownMenuItem(value: 'Entrada', child: Text('Entrada')),
                         DropdownMenuItem(value: 'Saída', child: Text('Saída')),
+                        DropdownMenuItem(value: 'Reserva', child: Text('Reserva')),
                       ],
                       onChanged: (value) {
                         setState(() {
                           tipoCaixaSelecionado = value;
-                          tipoEntradaSaidaSelecionado = null;
+                          tipoEntradaSaidaSelecionado = ''; // Limpa a seleção
                         });
                       },
                       decoration: CustomInputDecoration.build(
@@ -141,14 +141,18 @@ class _FinancialBoxRegisterScreenState
                         return null;
                       },
                     ),
-                    const SizedBox(height: 16), // Espaçamento horizontal
+                    const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: tipoEntradaSaidaSelecionado,
                       items: tipoCaixaSelecionado == 'Entrada'
-                          ? typeAccount == 'Pessoal' ? ComunsService().getEntradaPessoalOptions() : ComunsService().getEntradaOptions()
+                          ? (typeAccount == 'Pessoal'
+                          ? ComunsService().getEntradaPessoalOptions()
+                          : ComunsService().getEntradaOptions())
                           : tipoCaixaSelecionado == 'Saída'
-                              ? typeAccount == 'Pessoal' ? ComunsService().getSaidaPessoalOptions() : ComunsService().getSaidaOptions()
-                              : [],
+                          ? (typeAccount == 'Pessoal'
+                          ? ComunsService().getSaidaPessoalOptions()
+                          : ComunsService().getSaidaOptions())
+                          : (ComunsService().getReservaOptions() ?? []),
                       onChanged: (value) {
                         setState(() {
                           tipoEntradaSaidaSelecionado = value;
@@ -157,11 +161,13 @@ class _FinancialBoxRegisterScreenState
                       decoration: CustomInputDecoration.build(
                         labelText: tipoCaixaSelecionado == 'Entrada'
                             ? 'Tipo da Entrada'
-                            : 'Tipo da Saída',
+                            : tipoCaixaSelecionado == 'Saída'
+                            ? 'Tipo da Saída'
+                            : 'Tipo da Reserva',
                       ),
                       validator: (value) {
-                        if (value == null) {
-                          return 'Por favor, selecione o tipo de entrada/saída';
+                        if (value == null || value.isEmpty) {
+                          return 'Por favor, selecione o tipo da $tipoCaixaSelecionado';
                         }
                         return null;
                       },
@@ -171,17 +177,17 @@ class _FinancialBoxRegisterScreenState
                       controller: descricaoItemCaixaController,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return 'Descrição é obrigatória!';
+                          return 'Descrição da $tipoCaixaSelecionado é obrigatória!';
                         }
                         return null;
                       },
                       decoration: CustomInputDecoration.build(
                         hintText: tipoCaixaSelecionado == 'Entrada'
                             ? 'ex: Dízimo do João'
-                            : 'ex: Conta de energia',
+                            : tipoCaixaSelecionado == 'Saída' ? 'ex: Conta de energia' : 'ex: Dinheiro reservado',
                         labelText: tipoCaixaSelecionado == 'Entrada'
                             ? 'Descrição da Entrada'
-                            : 'Descrição da Saída',
+                            : tipoCaixaSelecionado == 'Saída' ? 'Descrição da Saída' : 'Descrição da Reserva',
                         suffixIcon: const Icon(Icons.description),
                       ),
                       maxLines: null,
@@ -200,17 +206,17 @@ class _FinancialBoxRegisterScreenState
                             ],
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'Valor do Item da caixa é obrigatório!';
+                                return 'Valor da $tipoCaixaSelecionado é obrigatório!';
                               }
                               return null;
                             },
                             decoration: CustomInputDecoration.build(
                               hintText: tipoCaixaSelecionado == 'Entrada'
                                   ? 'Digite o valor da entrada'
-                                  : 'Digite o valor da saída',
+                                  : tipoCaixaSelecionado == 'Saída' ? 'Digite o valor da saída' : 'Digite o valor da reserva',
                               labelText: tipoCaixaSelecionado == 'Entrada'
                                   ? 'Valor da Entrada'
-                                  : 'Valor da Saída',
+                                  : tipoCaixaSelecionado == 'Saída' ? 'Valor da Saída' : 'Valor da Reserva',
                               suffixIcon: const Icon(Icons.monetization_on),
                             ),
                           ),
@@ -246,7 +252,7 @@ class _FinancialBoxRegisterScreenState
                             decoration: CustomInputDecoration.build(
                               hintText: tipoCaixaSelecionado == 'Entrada'
                                   ? 'Digite o valor a ser somado a entrada'
-                                  : 'Digite o valor a ser somado a saída',
+                                  : tipoCaixaSelecionado == 'Saída' ? 'Digite o valor a ser somado a saída' : 'Digite o valor a ser somado a reserva',
                               labelText: 'Valor Somatório',
                               suffixIcon: const Icon(Icons.monetization_on),
                             ),
@@ -265,24 +271,25 @@ class _FinancialBoxRegisterScreenState
                           decoration: CustomInputDecoration.build(
                             labelText: tipoCaixaSelecionado == 'Entrada'
                                 ? 'Data da Entrada'
-                                : 'Data da Saída',
+                                : tipoCaixaSelecionado == 'Saída' ? 'Data da Saída' : 'Data da Reserva',
                             suffixIcon: const Icon(Icons.calendar_today),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Data de entrada/saída é obrigatória';
+                              return 'Data da $tipoCaixaSelecionado é obrigatória!';
                             }
                             return null;
                           },
                         ),
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
+                    tipoCaixaSelecionado != 'Reserva' ? const SizedBox(height: 16) : Container(),
+                    tipoCaixaSelecionado != 'Reserva' ? DropdownButtonFormField<String>(
                       value: pagamentoSelecionado,
                       items: tipoCaixaSelecionado == 'Entrada'
                           ? ComunsService().getPagamentoEntradaOptions()
-                          : ComunsService().getPagamentoSaidaOptions(),
+                          : tipoCaixaSelecionado == 'Saída' ? ComunsService().getPagamentoSaidaOptions()
+                          : ComunsService().getReservaOptions(),
                       onChanged: (value) {
                         setState(() {
                           pagamentoSelecionado = value;
@@ -293,7 +300,7 @@ class _FinancialBoxRegisterScreenState
                             ? 'Conta Paga?'
                             : 'Conta Recebida?',
                       ),
-                    ),
+                    ) : Container(),
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -370,17 +377,19 @@ class _FinancialBoxRegisterScreenState
         widget.idEditarFinancialBox != null
             ? tipoCaixaSelecionado == 'Entrada'
                 ? "Entrada atualizada com sucesso!"
-                : "Saída atualizada com sucesso!"
+                : tipoCaixaSelecionado == 'Saída' ? 'Saída atualizada com sucesso!'
+                : "Reserva atualizada com sucesso!"
             : tipoCaixaSelecionado == 'Entrada'
                 ? "Entrada registrada com sucesso!"
-                : "Saída registrada com sucesso!",
+                : tipoCaixaSelecionado == 'Saída' ? "Saída registrada com sucesso!"
+                : "Reserva registrada com sucesso!",
         backgroundColor: Colors.green,
       );
 
       Navigator.of(context).pop();
     } catch (e) {
       Navigator.of(context).pop();
-      customSnackBar(context, "Erro ao cadastrar imóvel: $e",
+      customSnackBar(context, "Erro ao cadastrar lançamento de caixa: $e",
           backgroundColor: Colors.red);
     }
   }

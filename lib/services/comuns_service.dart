@@ -2,8 +2,18 @@ import 'package:flutter/material.dart';
 
 class ComunsService {
 
+  List<DropdownMenuItem<String>> getTypeBoxOptions() {
+    return const [
+      DropdownMenuItem(value: 'todos', child: Text('Lançamentos')),
+      DropdownMenuItem(value: 'entradas', child: Text('Entradas')),
+      DropdownMenuItem(value: 'saidas', child: Text('Saídas')),
+      DropdownMenuItem(value: 'reservas', child: Text('Reservas')),
+    ];
+  }
+
   List<DropdownMenuItem<String>> getEntradaOptions() {
     return const [
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
       DropdownMenuItem(value: 'Dízimo', child: Text('Dízimo')),
       DropdownMenuItem(value: 'Oferta', child: Text('Oferta')),
       DropdownMenuItem(value: 'Outros', child: Text('Outros')),
@@ -12,6 +22,7 @@ class ComunsService {
 
   List<DropdownMenuItem<String>> getSaidaOptions() {
     return const [
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
       DropdownMenuItem(value: 'Compras', child: Text('Compras')),
       DropdownMenuItem(value: 'Despesas', child: Text('Despesas Gerais')),
       DropdownMenuItem(value: 'Outros', child: Text('Outros')),
@@ -20,6 +31,7 @@ class ComunsService {
 
   List<DropdownMenuItem<String>> getEntradaPessoalOptions() {
     return const [
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
       DropdownMenuItem(value: 'Salário', child: Text('Salário')),
       DropdownMenuItem(value: 'Renda Extra', child: Text('Renda Extra')),
       DropdownMenuItem(value: 'Reserva', child: Text('Reserva')),
@@ -29,8 +41,18 @@ class ComunsService {
 
   List<DropdownMenuItem<String>> getSaidaPessoalOptions() {
     return const [
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
       DropdownMenuItem(value: 'Compras', child: Text('Compras')),
       DropdownMenuItem(value: 'Gastos Fixo', child: Text('Gastos Fixo')),
+      DropdownMenuItem(value: 'Outros', child: Text('Outros')),
+    ];
+  }
+
+  List<DropdownMenuItem<String>> getReservaOptions() {
+    return const [
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
+      DropdownMenuItem(value: 'Renda Fixa', child: Text('Renda Fixa')),
+      DropdownMenuItem(value: 'Renda Extra', child: Text('Renda Extra')),
       DropdownMenuItem(value: 'Outros', child: Text('Outros')),
     ];
   }
