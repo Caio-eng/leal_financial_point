@@ -131,7 +131,7 @@ class FinancialReportService {
               itemCount: financialBoxes.length,
               itemBuilder: (context, index) {
                 final financialBox = financialBoxes[index];
-                return pw.Center(
+                return financialBox.tipoEntradaSaidaSelecionado != 'Reserva' ? pw.Center(
                   child: pw.Container(
                     width: double.infinity,
                     padding: const pw.EdgeInsets.all(12),
@@ -175,9 +175,70 @@ class FinancialReportService {
                       ],
                     ),
                   ),
-                );
+                ) : pw.SizedBox();
               },
             ),
+            // Detalhes do saldo
+            pw.SizedBox(height: 10),
+            pw.Center(
+              child: pw.Container(
+                  width: double.infinity,
+                  padding: const pw.EdgeInsets.all(12),
+                  margin: const pw.EdgeInsets.symmetric(vertical: 10),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.blue50,
+                    border: pw.Border.all(color: PdfColors.blueGrey700),
+                    borderRadius: pw.BorderRadius.circular(10),
+                  ),
+                child: pw.Column(
+                  children: [
+                    pw.Text(
+                      'Dinheiro Reservado',
+                      style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+                    ),
+                    pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                    pw.SizedBox(height: 10),
+                    for( FinancialBox financialBox in financialBoxes )
+                      if (financialBox.tipoEntradaSaidaSelecionado == 'Reserva')
+                        pw.Column(
+                          children: [
+                            pw.Text(
+                              'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
+                              style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                            ),
+                            pw.Text(
+                              'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
+                              style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
+                            ),
+                            pw.SizedBox(height: 10),
+                            pw.Text(
+                              'Descrição: ${financialBox.descricaoItemCaixaController}',
+                              style: const pw.TextStyle(fontSize: 16),
+                            ),
+                            financialBox.pagamentoOK != '' ? pw.SizedBox(height: 10) : pw.SizedBox(),
+                            financialBox.pagamentoOK != '' ? pw.Text(
+                              'Pagamento: ${financialBox.pagamentoOK}',
+                              style: const pw.TextStyle(fontSize: 16),
+                            ) : pw.SizedBox(),
+                            pw.SizedBox(height: 10),
+                            pw.Text(
+                              'Data: ${financialBox.dataItemCaixaController}',
+                              style: const pw.TextStyle(fontSize: 18),
+                            ),
+                            pw.SizedBox(height: 10),
+                            pw.Text(
+                              'Valor: ${financialBox.valorItemCaixaController}',
+                              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.green700),
+                            ),
+                            pw.SizedBox(height: 10),
+                            pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                            pw.SizedBox(height: 10),
+                          ]
+                        ),
+                  ]
+                )
+              )
+            )
           ];
         },
       ),
@@ -203,8 +264,6 @@ class FinancialReportService {
                     style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
                   ),
                   pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
-                  pw.SizedBox(height: 10),
-
                   // Detalhes do saldo
                   pw.Text(
                     'Saldo Atual',

@@ -338,17 +338,19 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     double saidas = 0;
 
                     for (var financialBox in financialBoxs) {
-                      String valorString = financialBox.valorItemCaixaController!
-                          .replaceAll('R\$', '')
-                          .replaceAll('.', '')
-                          .replaceAll(',', '.');
+                      if (financialBox.tipoEntradaSaidaSelecionado != 'Reserva') {
+                        String valorString = financialBox.valorItemCaixaController!
+                            .replaceAll('R\$', '')
+                            .replaceAll('.', '')
+                            .replaceAll(',', '.');
 
-                      double valor = double.parse(valorString);
+                        double valor = double.parse(valorString);
 
-                      if (financialBox.tipoCaixaSelecionado == 'Entrada') {
-                        entradas += valor;
-                      } else if (financialBox.tipoCaixaSelecionado == 'Saída') {
-                        saidas += valor;
+                        if (financialBox.tipoCaixaSelecionado == 'Entrada') {
+                          entradas += valor;
+                        } else if (financialBox.tipoCaixaSelecionado == 'Saída') {
+                          saidas += valor;
+                        }
                       }
                     }
 
