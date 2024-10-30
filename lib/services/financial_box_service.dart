@@ -39,6 +39,17 @@ class FinancialBoxService {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> findMyFinancialBoxReservas(String userId, bool ordemData) async* {
+    String typeAccount = await UsuarioService().getTypeAccount(userId);
+    yield* FirebaseFirestore.instance
+        .collection('my_financial_box')
+        .doc(userId)
+        .collection(typeAccount == 'Pessoal' ? 'financial_box' : typeAccount)
+        .where('tipoCaixaSelecionado', isEqualTo: 'Reserva')
+        .orderBy('dataItemCaixaController', descending: ordemData)
+        .snapshots();
+  }
+
   void saveFinancialBox(String idFinancialBox, String uid, FinancialBox newFinancialBox) async {
     String typeAccount = await UsuarioService().getTypeAccount(uid);
 

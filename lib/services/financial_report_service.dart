@@ -70,7 +70,7 @@ class FinancialReportService {
                         pw.SizedBox(height: 10),
                         pw.Text(
                           'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
-                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.green700),
+                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Entrada' ? PdfColors.green700 : financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.orange700),
                         ),
                       ],
                     ),
@@ -131,7 +131,7 @@ class FinancialReportService {
               itemCount: financialBoxes.length,
               itemBuilder: (context, index) {
                 final financialBox = financialBoxes[index];
-                return financialBox.tipoEntradaSaidaSelecionado != 'Reserva' ? pw.Center(
+                return financialBox.tipoCaixaSelecionado != 'Reserva' ? pw.Center(
                   child: pw.Container(
                     width: double.infinity,
                     padding: const pw.EdgeInsets.all(12),
@@ -199,7 +199,7 @@ class FinancialReportService {
                     pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
                     pw.SizedBox(height: 10),
                     for( FinancialBox financialBox in financialBoxes )
-                      if (financialBox.tipoEntradaSaidaSelecionado == 'Reserva')
+                      if (financialBox.tipoCaixaSelecionado == 'Reserva')
                         pw.Column(
                           children: [
                             pw.Text(
@@ -228,7 +228,7 @@ class FinancialReportService {
                             pw.SizedBox(height: 10),
                             pw.Text(
                               'Valor: ${financialBox.valorItemCaixaController}',
-                              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.green700),
+                              style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.orange700),
                             ),
                             pw.SizedBox(height: 10),
                             pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
