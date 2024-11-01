@@ -336,6 +336,9 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       setState(() {
                         saldoAtual = entradas - saidas - reservas;
+                        if (saldoAtual.toStringAsFixed(2) == '-0.00') {
+                          saldoAtual *= -1;
+                        }
                         saldoCalculado = true;
                       });
                     });
@@ -626,12 +629,10 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             'Copiar',
             'Cancelar', () async {
           _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
-          customSnackBar(
-              context, 'Registro copiado com sucesso para o mês seguinte!');
         });
       }
     } else {
-      customSnackBar(context, 'Registro já existe para o próximo mês!',
+      customSnackBar(context, 'Lancamento de caixa já existe para o próximo mês!',
           backgroundColor: Colors.red);
     }
   }
@@ -646,12 +647,12 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       tipoEntradaSaidaSelecionado: financialBox.tipoEntradaSaidaSelecionado,
       descricaoItemCaixaController: financialBox.descricaoItemCaixaController,
       valorItemCaixaController: financialBox.valorItemCaixaController,
-      dataItemCaixaController:
-          nextMonthDateString, // Ajuste a data para o próximo mês
+      dataItemCaixaController: nextMonthDateString, // Ajuste a data para o próximo mês
       pagamentoOK: financialBox.pagamentoOK,
     );
 
     FinancialBoxService()
         .saveFinancialBox(idFinancialBox, uid, newFinancialBox);
+    customSnackBar(context, 'Lançamento de caixa copiado com sucesso para o mês seguinte!');
   }
 }
