@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,16 +10,14 @@ import 'package:leal_apontar/services/comuns_service.dart';
 import 'package:leal_apontar/services/financial_box_service.dart';
 import 'package:leal_apontar/services/financial_report_service.dart';
 import 'package:leal_apontar/services/usuario_service.dart';
-import 'package:pdf/widgets.dart' as pw;
-
 import '../../components/custom_Input_decoration.dart';
 import '../../components/custom_card_item.dart';
 import '../../components/custom_snack_bar.dart';
 import '../../components/show_custom_alert_dialog.dart';
 
 class FinancialBoxScreen extends StatefulWidget {
-  User user;
-  FinancialBoxScreen({super.key, required this.user});
+  final User user;
+  const FinancialBoxScreen({super.key, required this.user});
 
   @override
   State<FinancialBoxScreen> createState() => _FinancialBoxScreenState();
@@ -31,8 +27,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   String searchQuery = '';
   String filtro = 'todos';
   double saldoAtual = 0;
-  bool saldoCalculado =
-      false; // Variável auxiliar para evitar cálculos repetidos
+  bool saldoCalculado = false;
   final TextEditingController _searchController = TextEditingController();
   String? anoSelecionado = '';
   String? mesSelecionado = '';
@@ -90,8 +85,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                           setState(() {
                             searchQuery =
                                 _searchController.text.trim().toLowerCase();
-                            saldoCalculado =
-                                false; // Reseta cálculo de saldo ao pesquisar
+                            saldoCalculado = false;
                           });
                         },
                       ),
@@ -104,8 +98,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     onChanged: (value) {
                       setState(() {
                         searchQuery = value.trim().toLowerCase();
-                        saldoCalculado =
-                            false; // Reseta cálculo de saldo ao digitar
+                        saldoCalculado = false;
                       });
                     },
                   ),
@@ -135,8 +128,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     onChanged: (value) {
                       setState(() {
                         mesSelecionado = value;
-                        saldoCalculado =
-                            false; // Reseta cálculo de saldo ao mudar mês
+                        saldoCalculado = false;
                       });
                     },
                     decoration: CustomInputDecoration.build(
@@ -184,8 +176,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                           onChanged: (value) {
                             setState(() {
                               filtro = value!;
-                              saldoCalculado =
-                              false; // Reseta cálculo de saldo ao mudar mês
+                              saldoCalculado = false;
                             });
                           },
                           decoration: CustomInputDecoration.build(
@@ -264,12 +255,10 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     financialBoxs = financialBoxs.where((financialBox) {
                       final tipoCaixaSelecionado =
                           financialBox.tipoCaixaSelecionado!.toLowerCase();
-                      final tipoEntradaSaidaSelecionado = financialBox
-                          .tipoEntradaSaidaSelecionado!
-                          .toLowerCase();
-                      final descricaoItemCaixaController = financialBox
-                          .descricaoItemCaixaController!
-                          .toLowerCase();
+                      final tipoEntradaSaidaSelecionado =
+                          financialBox.tipoEntradaSaidaSelecionado!.toLowerCase();
+                      final descricaoItemCaixaController =
+                          financialBox.descricaoItemCaixaController!.toLowerCase();
                       final valorItemCaixaController =
                           financialBox.valorItemCaixaController!.toLowerCase();
                       final dataItemCaixaController =
@@ -315,12 +304,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     double reservas = 0;
 
                     for (var financialBox in financialBoxs) {
-                      String valorString = financialBox
-                          .valorItemCaixaController!
-                          .replaceAll('R\$', '')
-                          .replaceAll('.', '')
-                          .replaceAll(',', '.');
-
+                      String valorString = FinancialBoxService().removeCaracteres(financialBox
+                          .valorItemCaixaController!);
                       double valor = double.parse(valorString);
 
                       if (financialBox.tipoCaixaSelecionado == 'Entrada') {
@@ -647,7 +632,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       tipoEntradaSaidaSelecionado: financialBox.tipoEntradaSaidaSelecionado,
       descricaoItemCaixaController: financialBox.descricaoItemCaixaController,
       valorItemCaixaController: financialBox.valorItemCaixaController,
-      dataItemCaixaController: nextMonthDateString, // Ajuste a data para o próximo mês
+      dataItemCaixaController: nextMonthDateString,
       pagamentoOK: financialBox.pagamentoOK,
     );
 

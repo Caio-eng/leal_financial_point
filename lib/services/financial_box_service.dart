@@ -122,4 +122,12 @@ class FinancialBoxService {
     return valorSomatorioFormatado.replaceAll('.', ',');
   }
 
+  String removeCaracteres(String value) {
+    return value
+        .replaceAll('R\$', '')
+        .replaceAll('.', '')
+        .replaceAll(',', '.')
+        .trim();
+  }
+
 }
