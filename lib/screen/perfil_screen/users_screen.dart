@@ -170,11 +170,13 @@ class _UsersScreenState extends State<UsersScreen> {
                       final typeUser =
                       usuario.typeUser!.toLowerCase();
                       final isAtivo = usuario.isAtivo!.toString().toLowerCase();
+                      final statusElevacao = usuario.statusElevacao!.toString().toLowerCase();
                       return nome.contains(searchQuery) ||
                           email.contains(searchQuery) ||
                           telefone.contains(searchQuery) ||
                           typeUser.contains(searchQuery) ||
-                          isAtivo.contains(searchQuery);
+                          isAtivo.contains(searchQuery) ||
+                          statusElevacao.contains(searchQuery);
                     }).toList();
                   }
 
@@ -233,8 +235,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                               labelText: 'Ativar ou Inativar o Usuário',
                                             ),
                                           ),
-                                          const SizedBox(height: 16),
-                                          DropdownButtonFormField<String>(
+                                          typeNivelSelecionado == 'USER' || typeNivelSelecionado == '' ? const SizedBox(height: 16) : const SizedBox(),
+                                          typeNivelSelecionado == 'USER' || typeNivelSelecionado == '' ? DropdownButtonFormField<String>(
                                             value: typeAccountSelecionado,
                                             items: ComunsService().getTypeAccountOptions(),
                                             onChanged: (value) {
@@ -245,7 +247,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                             decoration: CustomInputDecoration.build(
                                               labelText: 'Tipo de Conta',
                                             ),
-                                          ),
+                                          ) : Container(),
                                         ],
                                       ),
                                     ),
@@ -264,10 +266,10 @@ class _UsersScreenState extends State<UsersScreen> {
                                       TextButton(
                                         onPressed: () async {
                                           if (_formKey.currentState!.validate()) {
-                                            UsuarioService().updateTypeUser(usuario.uid, typeNivelSelecionado, typeActiveSelecionado, typeAccountSelecionado);
+                                            UsuarioService().updateTypeUser(usuario.uid, typeNivelSelecionado, typeActiveSelecionado, typeAccountSelecionado, usuario.statusElevacao!);
+                                            Navigator.of(context).pop();  // Fechar o diálogo
                                             customSnackBar(context, "Configuração do Usuário alterado com sucesso!",
                                                 backgroundColor: Colors.green);
-                                            Navigator.of(context).pop();  // Fechar o diálogo
                                           }
                                         },
                                         child: const Text('Confirmar'),
@@ -284,12 +286,13 @@ class _UsersScreenState extends State<UsersScreen> {
                           usuario.nome,
                           subtitle: 'Email: ${usuario.email}\nTipo de Conta: ${usuario.typeAccount == null || usuario.typeAccount == '' ? 'Nenhum' : usuario.typeAccount}',
                           icon: Icons.person,
-                          color: usuario.isAtivo == false ? Colors.red : Colors.white,
-                          owner: 'Pepel: '
+                          color: usuario.isAtivo == false || usuario.statusElevacao == 'Solicitado' ? Colors.red : Colors.white,
+                          owner: '${usuario.statusElevacao == 'Solicitado' || usuario.statusElevacao == 'Aprovado' ? 'Status: ${usuario.statusElevacao}' : ''}\nPapel: '
                               '${usuario.typeUser == null || usuario.typeUser == '' ?
                               'Nenhum'
                               : usuario.typeUser == 'ADMIN' ? 'Administrador'
-                              : usuario.typeUser == 'SUPER_ADMIN' ? 'Super Administrador' : 'Usuário'}\nStatus: ${usuario.isAtivo == false ? 'Inativo' : 'Ativo'}',
+                              : usuario.typeUser == 'SUPER_ADMIN' ? 'Super Administrador'
+                              : 'Usuário'}\nPerfil: ${usuario.isAtivo == false ? 'Inativo' : 'Ativo'}',
                         ),
                       );
                     },

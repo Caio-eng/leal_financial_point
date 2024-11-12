@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 class ComunsService {
 
-  List<DropdownMenuItem<String>> getTypeBoxOptions() {
-    return const [
-      DropdownMenuItem(value: 'todos', child: Text('Lançamentos')),
-      DropdownMenuItem(value: 'entradas', child: Text('Entradas')),
-      DropdownMenuItem(value: 'saidas', child: Text('Saídas')),
-      DropdownMenuItem(value: 'reservas', child: Text('Reservas')),
+  List<DropdownMenuItem<String>> getTypeBoxOptions(bool isReserva, bool isEntrada, bool isSaida) {
+    return [
+      const DropdownMenuItem(value: 'todos', child: Text('Lançamentos')),
+      if (isEntrada == false)
+        const DropdownMenuItem(value: 'entradas', child: Text('Entradas')),
+      if (isSaida == false)
+        const DropdownMenuItem(value: 'saidas', child: Text('Saídas')),
+      if (isReserva == false)
+        const DropdownMenuItem(value: 'reservas', child: Text('Reservas')),
     ];
   }
 

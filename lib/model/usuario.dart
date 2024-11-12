@@ -7,6 +7,7 @@ class Usuario {
   String? typeUser;
   bool? isAtivo;
   String? typeAccount;
+  String? statusElevacao;
 
   Usuario({
     required this.uid,
@@ -16,7 +17,8 @@ class Usuario {
     required this.cpf,
     this.typeUser,
     this.isAtivo,
-    this.typeAccount
+    this.typeAccount,
+    this.statusElevacao
   });
 
   // Método para converter os dados do objeto para um Map, para salvar no Firestore
@@ -29,7 +31,8 @@ class Usuario {
       'cpf': cpf,
       'typeUser': typeUser,
       'isAtivo': isAtivo,
-      'typeAccount': typeAccount
+      'typeAccount': typeAccount,
+      'statusElevacao': statusElevacao
     };
   }
 
@@ -43,7 +46,8 @@ class Usuario {
       cpf: map['cpf'],
       typeUser: map['typeUser'],
       isAtivo: map['isAtivo'],
-      typeAccount: map['typeAccount']
+      typeAccount: map['typeAccount'],
+      statusElevacao: map['statusElevacao'],
     );
   }
 }

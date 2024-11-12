@@ -14,6 +14,7 @@ import 'dart:html' as html; // Import necessário para downloads na web
 
 import '../../components/custom_input_decoration.dart';
 import '../../components/custom_snack_bar.dart';
+import '../../components/show_custom_alert_dialog.dart';
 import '../../services/comuns_service.dart';
 import '../../services/firebase_auth.dart';
 import '../home_screen.dart';
@@ -43,6 +44,8 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
   String? photoUrl;
   Uint8List? _imageBytes;
   String? typeAccount;
+  String? typeUser;
+  String? statusElevacao;
 
   @override
   void initState() {
@@ -70,6 +73,8 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
         _telefoneController.text = userProfileData['telefone'] ?? '';
         _dataNascimentoController.text = userProfileData['dataNascimento'] ?? '';
         typeAccount = userProfileData['typeAccount'];
+        typeUser = userProfileData['typeUser'];
+        statusElevacao = userProfileData['statusElevacao'];
 
         setState(() {
           isUpdating = true;
@@ -237,6 +242,12 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                       : null,
                 ),
               ),
+             const SizedBox(height: 16),
+              Center(
+                child: Text(
+                  'Perfil: ${typeUser == 'ADMIN' ? 'Administrador' : typeUser == 'USER' ? 'Usuário' : typeUser == 'SUPER_ADMIN' ? 'Super Administrador' : 'Nenhum'}',
+                  style: const TextStyle(fontSize: 16),),
+              ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _nomeController,
@@ -306,8 +317,8 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
+              typeUser == 'ADMIN' || typeUser == 'SUPER_ADMIN' ? const SizedBox(height: 16) : const SizedBox(),
+              typeUser == 'ADMIN' || typeUser == 'SUPER_ADMIN' ? DropdownButtonFormField<String>(
                 value: typeAccount,
                 items: ComunsService().getTypeAccountOptions(),
                 onChanged: (value) {
@@ -324,7 +335,35 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                   }
                   return null;
                 },
-              ),
+              ) : Container(),
+              isUpdating == true && statusElevacao != 'Solicitado' ?
+                typeUser == 'USER' || typeUser == '' ? const SizedBox(height: 16) : const SizedBox() : const SizedBox(),
+              isUpdating == true && statusElevacao != 'Solicitado' ?
+                typeUser == 'USER' || typeUser == '' ? TextButton(
+                  onPressed: () {
+                    showCustomAlertDialog(
+                        context,
+                        'Solicitar Admin',
+                        'Tem certeza que deseja confirmar solicitação de perfil?',
+                        'Confirmar',
+                        'Cancelar', () async {
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(widget.user.uid)
+                              .update({
+                            'statusElevacao': 'Solicitado',
+                          });
+                          customSnackBar(context, 'Solicitação de perfil enviada com sucesso!');
+                          setState(() {});
+                          Navigator.pop(context);
+                    });
+                  },
+                  child: const Text('Solicitar Perfil de Administrador'),
+                ) : Container() : Container(),
+              isUpdating == true && statusElevacao == 'Solicitado' ? const SizedBox(height: 16) : const SizedBox(),
+              isUpdating == true && statusElevacao == 'Solicitado' ? Center(
+                child: Text('$statusElevacao Perfil de Administrador\nAguardando aprovação...', style: const TextStyle(fontSize: 16, color: Colors.teal),),
+              ) : const SizedBox(),
               const SizedBox(height: 32),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -386,6 +425,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
                 'cpf': _cpfController.text.trim(),
                 'telefone': _telefoneController.text.trim(),
                 'dataNascimento': _dataNascimentoController.text.trim(),
+                'typeUser' : typeUser != null || typeUser != '' ? typeUser : '',
                 'typeAccount' : typeAccount ?? '',
               });
         }

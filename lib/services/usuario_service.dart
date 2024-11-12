@@ -69,11 +69,35 @@ class UsuarioService {
     }
   }
 
-  void updateTypeUser(String userId, String typeUser, bool isAtivo, String typeAccount) async {
+  Future<String> getTypeUser(String userId) async {
+    try {
+      // Obtém o documento do perfil do usuário com base no ID
+      DocumentSnapshot userProfileSnapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .get();
+
+      if (userProfileSnapshot.exists) {
+        Map<String, dynamic> userProfileData =
+        userProfileSnapshot.data() as Map<String, dynamic>;
+        String typeUser = userProfileData['typeUser'] ?? '';
+
+        // Retorna o valor de 'typeAccount'
+        return typeUser;
+      } else {
+        return '';
+      }
+    } catch (e) {
+      print('Erro ao obter o tipo de usuário: $e');
+      return '';
+    }
+  }
+
+  void updateTypeUser(String userId, String typeUser, bool isAtivo, String typeAccount, String statusElevacao) async {
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userId)
-        .update({'typeUser': typeUser, 'isAtivo': isAtivo, 'typeAccount': typeAccount});
+        .update({'typeUser': typeUser, 'isAtivo': isAtivo, 'typeAccount': typeAccount, 'statusElevacao': typeUser == 'ADMIN' ? 'Aprovado' : typeUser == 'USER' ? '' : statusElevacao });
   }
 
   void updateTypeAccountUser(String userId, String typeAccount) async {

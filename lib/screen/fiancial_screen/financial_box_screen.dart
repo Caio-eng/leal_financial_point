@@ -35,16 +35,67 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   bool? ordemData = true;
   late List<FinancialBox> financialBoxs = [];
   String typeAccount = 'Pessoal';
+  String typeUser = '';
+  Stream<QuerySnapshot> listaFinancialBoxReserva = const Stream.empty();
+  Stream<QuerySnapshot> listaFinancialBoxEntrada = const Stream.empty();
+  Stream<QuerySnapshot> listaFinancialBoxSaida = const Stream.empty();
+  bool? isReserva = false, isEntrada = false, isSaida = false;
 
   @override
   void initState() {
     super.initState();
     atualizarAnoEMesSelecionados();
     _loadUserInfo();
+    _verificaFinancialBox();
+  }
+
+  void _verificaFinancialBox() {
+    listaFinancialBoxReserva = FinancialBoxService().findMyFinancialBoxReservas(
+      widget.user.uid, ordemData!,
+    );
+    listaFinancialBoxEntrada = FinancialBoxService().findMyFinancialBoxEntradas(
+      widget.user.uid, ordemData!,
+    );
+    listaFinancialBoxSaida = FinancialBoxService().findMyFinancialBoxSaidas(
+      widget.user.uid, ordemData!,
+    );
+    listaFinancialBoxReserva.listen((snapshot) {
+      if (snapshot.docs.isEmpty) {
+        isReserva = true;
+        saldoCalculado = false;
+        setState(() {});
+      } else {
+        isReserva = false;
+        setState(() {});
+      }
+    });
+
+    listaFinancialBoxEntrada.listen((snapshot) {
+      if (snapshot.docs.isEmpty) {
+        isEntrada = true;
+        saldoCalculado = false;
+        setState(() {});
+      } else {
+        isEntrada = false;
+        setState(() {});
+      }
+    });
+
+    listaFinancialBoxSaida.listen((snapshot) {
+      if (snapshot.docs.isEmpty) {
+        isSaida = true;
+        saldoCalculado = false;
+        setState(() {});
+      } else {
+        isSaida = false;
+        setState(() {});
+      }
+    });
   }
 
   void _loadUserInfo() async {
     typeAccount = await UsuarioService().getTypeAccount(widget.user.uid);
+    typeUser = await UsuarioService().getTypeUser(widget.user.uid);
     setState(() {});
   }
 
@@ -136,7 +187,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   ),
                 ),
-                Padding(
+                typeUser == 'ADMIN' || typeUser == 'SUPER_ADMIN' ? Padding(
                   padding: const EdgeInsets.all(16),
                   child: DropdownButtonFormField<String>(
                     value: typeAccount,
@@ -163,16 +214,16 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       labelText: 'Trocar Conta',
                     ),
                   ),
-                ),
+                ) : Container(),
                 Row(
                   children: [
-                    Expanded(
+                   Expanded(
                       flex: 3,
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: DropdownButtonFormField<String>(
                           value: filtro,
-                          items: ComunsService().getTypeBoxOptions(),
+                          items: ComunsService().getTypeBoxOptions(isReserva!, isEntrada!, isSaida!),
                           onChanged: (value) {
                             setState(() {
                               filtro = value!;
@@ -201,7 +252,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   ],
                 ),
-                filtro != 'reservas' ?Padding(
+                filtro != 'reservas' ? Padding(
                   padding: const EdgeInsets.all(16),
                   child: DropdownButtonFormField<String>(
                     value: pagamentoSelecionado,
@@ -224,8 +275,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: filtro == 'todos'
-                  ? FinancialBoxService()
-                      .findMyFinancialBox(widget.user.uid, ordemData!)
+                  ? FinancialBoxService().findMyFinancialBox(widget.user.uid, ordemData!)
                   : filtro == 'entradas'
                       ? FinancialBoxService().findMyFinancialBoxEntradas(
                           widget.user.uid, ordemData!)
@@ -362,10 +412,11 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                                   ),
                                 );
                                 saldoCalculado = false;
+                                _verificaFinancialBox();
                                 break;
                               case 'Excluir':
-                                deleteFinancialBox(
-                                    financialBox.idFinancialBox!);
+                                deleteFinancialBox(financialBox.idFinancialBox!);
+                                _verificaFinancialBox();
 
                               case 'Copiar registro':
                                 showCustomAlertDialog(
@@ -376,6 +427,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                                     'Cancelar', () async {
                                   copyFinancialBox(financialBox.idFinancialBox!,
                                       financialBox, widget.user.uid);
+                                  _verificaFinancialBox();
                                 });
                                 break;
                             }
@@ -451,6 +503,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   );
                   saldoCalculado = false;
+                  _verificaFinancialBox();
                 },
               ),
               financialBoxs.isNotEmpty
@@ -487,8 +540,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                           label: 'Copiar Lista de Lançamentos',
                           backgroundColor: Colors.teal,
                           onTap: () {
-                            copyListFinancialBox(
-                                financialBoxs); // Chama a funcionalidade de copiar o listado
+                            copyListFinancialBox(financialBoxs);
+                            _verificaFinancialBox();
                           },
                         ),
               financialBoxs.isNotEmpty
@@ -501,6 +554,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       backgroundColor: Colors.teal,
                       onTap: () {
                         deleteAllFinancialBox(financialBoxs);
+                        _verificaFinancialBox();
                       },
                     )
                   : SpeedDialChild(),
@@ -524,6 +578,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
               .deleteFinancialBox(financialBox.idFinancialBox, widget.user.uid);
         }
         mesSelecionado = DateTime.now().month.toString().padLeft(2, '0');
+        anoSelecionado = DateTime.now().year.toString();
+        filtro = 'todos';
         setState(() {});
         customSnackBar(context, 'Lançamentos de caixa excluídos com sucesso!');
       });
@@ -542,6 +598,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
         'Cancelar', () async {
       FinancialBoxService().deleteFinancialBox(idFinancialBox, widget.user.uid);
       saldoCalculado = false;
+      filtro = 'todos';
       customSnackBar(context, 'Lançamento de caixa excluído com sucesso!');
     });
   }
@@ -577,8 +634,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                   widget.user.uid, nextMonthDateString);
             }
           }
-          customSnackBar(
-              context, 'Lançamentos copiado com sucesso para o mês seguinte!');
+          setState(() {});
+          customSnackBar(context, 'Lançamentos copiado com sucesso para o mês seguinte!');
         },
         showLoadingIndicator: true,
       );
@@ -606,6 +663,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
           financialBox, nextMonthDateString, uid);
       if (!exists) {
         _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+        customSnackBar(context, 'Lançamento de caixa copiado com sucesso para o mês seguinte!');
       } else {
         showCustomAlertDialog(
             context,
@@ -613,7 +671,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             'Tem um registro com está data para o mês. Tem certeza que deseja copiar este registro?',
             'Copiar',
             'Cancelar', () async {
-          _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+              _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+              customSnackBar(context, 'Lançamento de caixa copiado com sucesso para o mês seguinte!');
         });
       }
     } else {
@@ -636,8 +695,6 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       pagamentoOK: financialBox.pagamentoOK,
     );
 
-    FinancialBoxService()
-        .saveFinancialBox(idFinancialBox, uid, newFinancialBox);
-    customSnackBar(context, 'Lançamento de caixa copiado com sucesso para o mês seguinte!');
+    FinancialBoxService().saveFinancialBox(idFinancialBox, uid, newFinancialBox);
   }
 }
