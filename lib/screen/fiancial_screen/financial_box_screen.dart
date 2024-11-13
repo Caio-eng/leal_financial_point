@@ -66,6 +66,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
         setState(() {});
       } else {
         isReserva = false;
+        saldoCalculado = false;
         setState(() {});
       }
     });
@@ -77,6 +78,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
         setState(() {});
       } else {
         isEntrada = false;
+        saldoCalculado = false;
         setState(() {});
       }
     });
@@ -85,12 +87,17 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       if (snapshot.docs.isEmpty) {
         isSaida = true;
         saldoCalculado = false;
+        saldoCalculado = false;
         setState(() {});
       } else {
         isSaida = false;
+        saldoCalculado = false;
         setState(() {});
       }
     });
+
+    saldoCalculado = false;
+    setState(() {});
   }
 
   void _loadUserInfo() async {
