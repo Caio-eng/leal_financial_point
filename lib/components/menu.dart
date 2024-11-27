@@ -10,6 +10,7 @@ import 'package:leal_apontar/screen/perfil_screen/users_screen.dart';
 import '../screen/home_screen.dart';
 import '../screen/login_screen/login_screen.dart';
 import '../screen/perfil_screen/register_perfil_screen.dart';
+import '../screen/perfil_screen/update_password_modal.dart';
 import '../services/firebase_auth.dart';
 import 'custom_snack_bar.dart';
 
@@ -180,6 +181,29 @@ class _MenuState extends State<Menu> {
                 ),
               ),
               const SizedBox(height: 30),
+              perfilExistente == true ? ElevatedButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return UpdatePasswordModal(user: widget.user);
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 40, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: const Text(
+                  'Atualizar Senha',
+                ),
+              ) : Container(),
+              perfilExistente == true ? const SizedBox(height: 16) : const SizedBox(),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(

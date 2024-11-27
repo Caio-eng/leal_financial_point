@@ -17,8 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
-  final TextEditingController _comfirmaSenhaController =
-      TextEditingController();
+  final TextEditingController _comfirmaSenhaController = TextEditingController();
   final TextEditingController _nomeController = TextEditingController();
 
   bool _senhaVisivel = true;

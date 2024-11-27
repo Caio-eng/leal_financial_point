@@ -71,6 +71,24 @@ class AuthService {
         await user.updateDisplayName(nome);
       }
     } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'weak-password':
+          return 'Senha fraca';
+      }
+      return e.code;
+    } catch (e) {
+      return e.toString();
+    }
+    return null;
+  }
+
+  Future<String?> atualizarSenha({required String senha}) async {
+    try {
+      User? user = _firebaseAuth.currentUser;
+      if (user != null) {
+        await user.updatePassword(senha);
+      }
+    } on FirebaseAuthException catch (e) {
       return e.code;
     } catch (e) {
       return e.toString();
