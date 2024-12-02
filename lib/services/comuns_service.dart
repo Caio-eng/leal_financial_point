@@ -37,7 +37,6 @@ class ComunsService {
       DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
       DropdownMenuItem(value: 'Salário', child: Text('Salário')),
       DropdownMenuItem(value: 'Renda Extra', child: Text('Renda Extra')),
-      DropdownMenuItem(value: 'Reserva', child: Text('Reserva')),
       DropdownMenuItem(value: 'Outros', child: Text('Outros')),
     ];
   }
