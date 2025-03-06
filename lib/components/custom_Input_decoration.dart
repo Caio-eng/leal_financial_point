@@ -15,6 +15,7 @@ class CustomInputDecoration {
       labelText: labelText,
       hintText: hintText,
       filled: true,
+      isDense: true,
       fillColor: fillColor,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
