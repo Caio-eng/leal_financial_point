@@ -59,6 +59,14 @@ class ComunsService {
     ];
   }
 
+  List<DropdownMenuItem<String>> getReservaComercialOptions() {
+    return const [
+      DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
+      DropdownMenuItem(value: 'Caixa', child: Text('Caixa')),
+      DropdownMenuItem(value: 'Outros', child: Text('Outros')),
+    ];
+  }
+
   List<DropdownMenuItem<String>> getPagamentoSaidaOptions() {
     return const [
       DropdownMenuItem(value: '', child: Text('Selecione uma opção')),
