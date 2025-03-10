@@ -523,10 +523,17 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                       backgroundColor: Colors.teal,
                       onTap: () {
                         if (financialBoxs.isNotEmpty) {
-                          FinancialReportService().generateFinancialReport(
+                          if (typeAccount == 'Pessoal') {
+                            FinancialReportService().generateFinancialReport(
                               financialBoxs, saldoAtual, filtro);
-                          customSnackBar(context,
+                              customSnackBar(context,
+                              'Relatório financeiro Pessoal gerado com sucesso!');
+                          } else {
+                            FinancialReportService().generateComercialFinancialReport(
+                              financialBoxs, saldoAtual, filtro);
+                            customSnackBar(context,
                               'Relatório financeiro gerado com sucesso!');
+                          }
                         } else {
                           customSnackBar(context,
                               'Nenhum registro de caixa foi encontrado!',
