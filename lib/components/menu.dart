@@ -1,4 +1,3 @@
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +11,6 @@ import '../screen/login_screen/login_screen.dart';
 import '../screen/perfil_screen/register_perfil_screen.dart';
 import '../screen/perfil_screen/update_password_modal.dart';
 import '../services/firebase_auth.dart';
-import 'custom_snack_bar.dart';
 
 class Menu extends StatefulWidget {
   final User user;

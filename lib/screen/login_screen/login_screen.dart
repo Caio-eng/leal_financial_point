@@ -149,6 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 
                       //Botão de Entrar
                       SizedBox(
+                        height: 50,
                         child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -218,6 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 
                       //Botão de novo usuário
                       SizedBox(
+                        height: 50,
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             shape: RoundedRectangleBorder(

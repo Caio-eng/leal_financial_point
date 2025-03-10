@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 class FinancialReportService {
 
+  // Comprovante de lançamento do caixa
   void generateProofFinancialBox(FinancialBox financialBox) async {
     final pdf = pw.Document();
 
@@ -55,12 +56,6 @@ class FinancialReportService {
                           'Descrição: ${financialBox.descricaoItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 16),
                         ),
-                        financialBox.pagamentoOK != '' ? pw.SizedBox(height: 10) : pw.SizedBox(),
-                        financialBox.pagamentoOK != '' ? pw.Text(
-                          'Pagamento: ${financialBox.pagamentoOK}',
-                          style: const pw.TextStyle(fontSize: 16),
-                        ) : pw.SizedBox(),
-                        pw.SizedBox(height: 10),
                         pw.Text(
                           'Data: ${financialBox.dataItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 18),
@@ -97,11 +92,12 @@ class FinancialReportService {
     final blob = html.Blob([bytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
     html.AnchorElement(href: url)
-      ..setAttribute('download', 'comprovante_financeiro.pdf')
+      ..setAttribute('download', 'Comprovante de ${financialBox.tipoCaixaSelecionado}.pdf')
       ..click();
     html.Url.revokeObjectUrl(url);
   }
 
+  // Relatório financeiro
   void generateFinancialReport(List<FinancialBox> financialBoxes, double saldoAtual, String filtro) async {
     final pdf = pw.Document();
     final dateFormat = DateFormat('dd/MM/yyyy');
@@ -145,27 +141,12 @@ class FinancialReportService {
                       crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo do card
                       children: [
                         pw.Text(
-                          'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
+                          '${financialBox.tipoCaixaSelecionado} - ${financialBox.dataItemCaixaController}',
                           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
                         ),
                         pw.Text(
-                          'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
-                          style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
-                        ),
-                        pw.SizedBox(height: 10),
-                        pw.Text(
                           'Descrição: ${financialBox.descricaoItemCaixaController}',
-                          style: const pw.TextStyle(fontSize: 16),
-                        ),
-                        financialBox.pagamentoOK != '' ? pw.SizedBox(height: 10) : pw.SizedBox(),
-                        financialBox.pagamentoOK != '' ? pw.Text(
-                          'Pagamento: ${financialBox.pagamentoOK}',
-                          style: const pw.TextStyle(fontSize: 16),
-                        ) : pw.SizedBox(),
-                        pw.SizedBox(height: 10),
-                        pw.Text(
-                          'Data: ${financialBox.dataItemCaixaController}',
-                          style: const pw.TextStyle(fontSize: 18),
+                          style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
                         ),
                         pw.SizedBox(height: 10),
                         pw.Text(
@@ -203,27 +184,12 @@ class FinancialReportService {
                         pw.Column(
                           children: [
                             pw.Text(
-                              'Tipo de Lançamento: ${financialBox.tipoCaixaSelecionado}',
+                              '${financialBox.tipoCaixaSelecionado} - ${financialBox.dataItemCaixaController}',
                               style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
                             ),
                             pw.Text(
-                              'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}',
-                              style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
-                            ),
-                            pw.SizedBox(height: 10),
-                            pw.Text(
                               'Descrição: ${financialBox.descricaoItemCaixaController}',
-                              style: const pw.TextStyle(fontSize: 16),
-                            ),
-                            financialBox.pagamentoOK != '' ? pw.SizedBox(height: 10) : pw.SizedBox(),
-                            financialBox.pagamentoOK != '' ? pw.Text(
-                              'Pagamento: ${financialBox.pagamentoOK}',
-                              style: const pw.TextStyle(fontSize: 16),
-                            ) : pw.SizedBox(),
-                            pw.SizedBox(height: 10),
-                            pw.Text(
-                              'Data: ${financialBox.dataItemCaixaController}',
-                              style: const pw.TextStyle(fontSize: 18),
+                              style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
                             ),
                             pw.SizedBox(height: 10),
                             pw.Text(
@@ -306,9 +272,147 @@ class FinancialReportService {
     final blob = html.Blob([bytes], 'application/pdf');
     final url = html.Url.createObjectUrlFromBlob(blob);
     html.AnchorElement(href: url)
-      ..setAttribute('download', 'relatorio_financeiro.pdf')
+      ..setAttribute('download', 'Relatório Financeiro.pdf')
       ..click();
     html.Url.revokeObjectUrl(url);
   }
 
+// Relatório financeiro Comercial
+void generateComercialFinancialReport(List<FinancialBox> financialBoxes, double saldoAtual, String filtro) async {
+    final pdf = pw.Document();
+    final dateFormat = DateFormat('dd/MM/yyyy');
+
+    financialBoxes.sort((a, b) {
+      final dateA = dateFormat.parse(a.dataItemCaixaController.toString());
+      final dateB = dateFormat.parse(b.dataItemCaixaController.toString());
+      return dateA.compareTo(dateB);
+    });
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4.copyWith(marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20),
+        build: (pw.Context context) {
+          return [
+            pw.Center(
+              child: pw.Text(
+                'Relatório Financeiro',
+                style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+              ),
+            ),
+            pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+            pw.SizedBox(height: 20),
+
+            // Lista todos os FinancialBox com quebra automática de página
+            pw.ListView.builder(
+              itemCount: financialBoxes.length,
+              itemBuilder: (context, index) {
+                final financialBox = financialBoxes[index];
+                return financialBox.tipoCaixaSelecionado != 'Reserva' ? pw.Center(
+                  child: pw.Container(
+                    width: double.infinity,
+                    padding: const pw.EdgeInsets.all(12),
+                    margin: const pw.EdgeInsets.symmetric(vertical: 10),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.blue50,
+                      border: pw.Border.all(color: PdfColors.blueGrey700),
+                      borderRadius: pw.BorderRadius.circular(10),
+                    ),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo do card
+                      children: [
+                        pw.Text(
+                          '${financialBox.tipoCaixaSelecionado} - ${financialBox.dataItemCaixaController}',
+                          style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.Text(
+                          '${financialBox.tipoEntradaSaidaSelecionado} ${financialBox.descricaoItemCaixaController}',
+                          style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
+                        ),
+                        financialBox.pagamentoOK != '' ? pw.SizedBox(height: 10) : pw.SizedBox(),
+                        financialBox.pagamentoOK != '' ? pw.Text(
+                          'Pagamento: ${financialBox.pagamentoOK}',
+                          style: const pw.TextStyle(fontSize: 16),
+                        ) : pw.SizedBox(),
+                        pw.SizedBox(height: 10),
+                        pw.Text(
+                          'Valor: ${financialBox.valorItemCaixaController}',
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.green700),
+                        ),
+                      ],
+                    ),
+                  ),
+                ) : pw.SizedBox();
+              },
+            ),
+          ];
+        },
+      ),
+    );
+
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4.copyWith(marginBottom: 20, marginLeft: 20, marginRight: 20, marginTop: 20),
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Container(
+              padding: const pw.EdgeInsets.all(20),
+              decoration: pw.BoxDecoration(
+                border: pw.Border.all(color: PdfColors.blueGrey700),
+                borderRadius: pw.BorderRadius.circular(12),
+              ),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center, // Centraliza o conteúdo
+                children: [
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    'Resumo Financeiro',
+                    style: pw.TextStyle(fontSize: 26, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+                  ),
+                  pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                  // Detalhes do saldo
+                  pw.Text(
+                    filtro != 'reservas' ? 'Saldo Atual' : 'Reserva Atual',
+                    style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: PdfColors.blueGrey900),
+                  ),
+                  pw.Text(
+                    filtro != 'reservas' ? 'Com base nos lançamentos realizados, o saldo atual é:' : 'Com base nos lançamentos, a reserva atual é:',
+                    style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey600),
+                  ),
+                  pw.SizedBox(height: 10),
+                  pw.Text(
+                    filtro == 'reservas' ? 'R\$ ${(saldoAtual * -1).toStringAsFixed(2)}' : 'R\$ ${saldoAtual.toStringAsFixed(2)}',
+                    style: pw.TextStyle(
+                      fontSize: 36,
+                      fontWeight: pw.FontWeight.bold,
+                      color: filtro == 'reservas' ? PdfColors.orange700 : saldoAtual > 0 && filtro != 'reservas' ? PdfColors.green700 : PdfColors.red700,
+                    ),
+                  ),
+                  pw.SizedBox(height: 20),
+                  pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
+                  pw.SizedBox(height: 10),
+
+                  // Rodapé
+                  pw.Align(
+                    alignment: pw.Alignment.centerRight,
+                    child: pw.Text(
+                      'A Leal Financial Point agradece por utilizar nosso serviço!',
+                      style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic, color: PdfColors.blueGrey400),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+
+    final bytes = await pdf.save();
+    final blob = html.Blob([bytes], 'application/pdf');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    html.AnchorElement(href: url)
+      ..setAttribute('download', 'Relatório Financeiro.pdf')
+      ..click();
+    html.Url.revokeObjectUrl(url);
+  }
 }

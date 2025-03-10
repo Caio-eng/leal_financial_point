@@ -120,10 +120,11 @@ class _FinancialBoxRegisterScreenState
                   children: [
                     DropdownButtonFormField<String>(
                       value: tipoCaixaSelecionado,
-                      items: const [
-                        DropdownMenuItem(value: 'Entrada', child: Text('Entrada')),
-                        DropdownMenuItem(value: 'Saída', child: Text('Saída')),
-                        DropdownMenuItem(value: 'Reserva', child: Text('Reserva')),
+                      items: [
+                        const DropdownMenuItem(value: 'Entrada', child: Text('Entrada')),
+                        const DropdownMenuItem(value: 'Saída', child: Text('Saída')),
+                        if (typeAccount == 'Pessoal')
+                          const DropdownMenuItem(value: 'Reserva', child: Text('Reserva')),
                       ],
                       onChanged: (value) {
                         setState(() {
