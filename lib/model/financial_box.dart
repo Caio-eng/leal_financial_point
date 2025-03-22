@@ -5,6 +5,8 @@ class FinancialBox {
   final String? descricaoItemCaixaController;
   final String? valorItemCaixaController;
   final String? dataItemCaixaController;
+  final String? quantidade;
+  final String? valorTotal;
   final String? pagamentoOK;
   final String? papelUsuario;
 
@@ -16,6 +18,8 @@ class FinancialBox {
     this.valorItemCaixaController,
     this.dataItemCaixaController,
     this.pagamentoOK,
+    this.quantidade,
+    this.valorTotal,
     this.papelUsuario
   });
 
@@ -28,6 +32,8 @@ class FinancialBox {
       'valorItemCaixaController': valorItemCaixaController,
       'dataItemCaixaController': dataItemCaixaController,
       'papelUsuario': papelUsuario,
+      'quantidade': quantidade,
+      'valorTotal': valorTotal,
       'pagamentoOK': pagamentoOK
     };
   }
@@ -42,6 +48,8 @@ class FinancialBox {
       dataItemCaixaController: map['dataItemCaixaController'] ?? '',
       papelUsuario: map['papelUsuario'] ?? '',
       pagamentoOK: map['pagamentoOK'] ?? '',
+      quantidade: map['quantidade'] ?? 0,
+      valorTotal: map['valorTotal'] ?? ''
     );
   }
 }

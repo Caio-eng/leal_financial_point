@@ -27,6 +27,9 @@ class _FinancialBoxRegisterScreenState
   final _formKey = GlobalKey<FormState>();
   TextEditingController valorItemCaixaController = TextEditingController();
   TextEditingController valorSomatorioController = TextEditingController();
+  TextEditingController valorMultipliController = TextEditingController();
+  TextEditingController valorTotal = TextEditingController();
+  TextEditingController quantidade = TextEditingController();
   TextEditingController descricaoItemCaixaController = TextEditingController();
   String? pagamentoSelecionado = '';
   final TextEditingController dataItemCaixaController = TextEditingController();
@@ -37,6 +40,7 @@ class _FinancialBoxRegisterScreenState
   bool showTextField = false;
   User? user;
   String typeAccount = '';
+  late double valorItemCaixa;
 
   @override
   void initState() {
@@ -58,21 +62,25 @@ class _FinancialBoxRegisterScreenState
           .get();
 
       if (financialBoxDoc.exists) {
-        Map<String, dynamic> imovelData =
+        Map<String, dynamic> financialBoxData =
             financialBoxDoc.data() as Map<String, dynamic>;
 
         setState(() {
-          idFinancialBox = imovelData['idFinancialBox'] ?? '';
-          tipoCaixaSelecionado = imovelData['tipoCaixaSelecionado'] ?? '';
+          idFinancialBox = financialBoxData['idFinancialBox'] ?? '';
+          tipoCaixaSelecionado = financialBoxData['tipoCaixaSelecionado'] ?? '';
           tipoEntradaSaidaSelecionado =
-              imovelData['tipoEntradaSaidaSelecionado'] ?? '';
+              financialBoxData['tipoEntradaSaidaSelecionado'] ?? '';
           descricaoItemCaixaController.text =
-              imovelData['descricaoItemCaixaController'] ?? '';
+              financialBoxData['descricaoItemCaixaController'] ?? '';
           valorItemCaixaController.text =
-              imovelData['valorItemCaixaController'] ?? '';
+              financialBoxData['valorItemCaixaController'] ?? '';
           dataItemCaixaController.text =
-              imovelData['dataItemCaixaController'] ?? '';
-          pagamentoSelecionado = imovelData['pagamentoOK'] ?? '';
+              financialBoxData['dataItemCaixaController'] ?? '';
+          pagamentoSelecionado = financialBoxData['pagamentoOK'] ?? '';
+          if (typeAccount == 'Comercial') {
+            valorTotal.text = financialBoxData['valorTotal'] ?? '';
+            quantidade.text = financialBoxData['quantidade'] ?? '';
+          }
         });
       }
     } catch (e) {
@@ -195,6 +203,20 @@ class _FinancialBoxRegisterScreenState
                       maxLines: null,
                     ),
                     const SizedBox(height: 16),
+                    typeAccount == 'Comercial' ? TextFormField(
+                      controller: quantidade,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                      decoration: CustomInputDecoration.build(
+                        labelText: tipoCaixaSelecionado == 'Entrada'
+                            ? 'Quantidade de Entrada'
+                            : tipoCaixaSelecionado == 'Saída' ? 'Quantidade de Saída' : 'Quantidade de Reserva',
+                        suffixIcon: const Icon(Icons.numbers_rounded),
+                      ),
+                    ) : Container(),
+                    typeAccount == 'Comercial' ? const SizedBox(height: 16) : const SizedBox(),
                     Row(
                       children: [
                         Expanded(
@@ -206,7 +228,16 @@ class _FinancialBoxRegisterScreenState
                               FilteringTextInputFormatter.digitsOnly,
                               CurrencyTextInputFormatter()
                             ],
-                            validator: (value) {
+                            onChanged: (valorItemCaixaController) {
+                              valorItemCaixa = FinancialBoxService()
+                                .convertValorToDouble(valorItemCaixaController) *
+                              FinancialBoxService()
+                                  .convertValorToDouble(quantidade.text);
+
+                               valorTotal.text =
+                                    FinancialBoxService().convertValorToString(valorItemCaixa);
+                            },
+                            validator: (value) {  
                               if (value!.isEmpty) {
                                 return 'Valor da $tipoCaixaSelecionado é obrigatório!';
                               }
@@ -223,7 +254,8 @@ class _FinancialBoxRegisterScreenState
                             ),
                           ),
                         ),
-                        widget.idEditarFinancialBox != null
+                    const SizedBox(height: 16),
+                        widget.idEditarFinancialBox != null && typeAccount == 'Pessoal' 
                             ? Expanded(
                                 child: Tooltip(
                                   message: "Adicionar valor",
@@ -242,6 +274,21 @@ class _FinancialBoxRegisterScreenState
                             : Container()
                       ],
                     ),
+                    typeAccount == 'Comercial' ? const SizedBox(height: 16) : const SizedBox(),
+                    typeAccount == 'Comercial' ? TextFormField(
+                      controller: valorTotal,
+                      inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              CurrencyTextInputFormatter()
+                            ],
+                      enabled: false,
+                      decoration: CustomInputDecoration.build(
+                        labelText: tipoCaixaSelecionado == 'Entrada'
+                            ? 'Valor Total da Entrada'
+                            : tipoCaixaSelecionado == 'Saída' ? 'Valor total da Saída' : 'Valor total da Reserva',
+                        suffixIcon: const Icon(Icons.monetization_on),
+                      ),
+                    ) : Container(),
                     const SizedBox(height: 16),
                     showTextField
                         ? TextFormField(
@@ -363,10 +410,12 @@ class _FinancialBoxRegisterScreenState
           tipoCaixaSelecionado: tipoCaixaSelecionado,
           tipoEntradaSaidaSelecionado: tipoEntradaSaidaSelecionado,
           descricaoItemCaixaController: descricaoItemCaixaController.text,
-          valorItemCaixaController: widget.idEditarFinancialBox != null &&
-                  valorSomatorioController.text != ''
+          quantidade: typeAccount == 'Comercial' ? quantidade.text : null,
+          valorItemCaixaController: typeAccount == 'Comercial' ? valorItemCaixaController.text :
+          widget.idEditarFinancialBox != null && valorSomatorioController.text != ''
               ? valorSomatorioFormatado
               : valorItemCaixaController.text,
+          valorTotal: typeAccount == 'Comercial' ? valorTotal.text : null,
           dataItemCaixaController: dataItemCaixaController.text,
           pagamentoOK: pagamentoSelecionado);
 

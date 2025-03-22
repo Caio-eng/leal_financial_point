@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class FinancialReportService {
 
   // Comprovante de lançamento do caixa
-  void generateProofFinancialBox(FinancialBox financialBox) async {
+  void generateProofFinancialBox(FinancialBox financialBox, String typeAccount) async {
     final pdf = pw.Document();
 
     pdf.addPage(
@@ -56,6 +56,14 @@ class FinancialReportService {
                           'Descrição: ${financialBox.descricaoItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 16),
                         ),
+                        typeAccount == 'Comercial' ? pw.Text(
+                          'Quantidade: ${financialBox.quantidade}',
+                          style: const pw.TextStyle(fontSize: 16),
+                        ) : pw.SizedBox(),
+                        typeAccount == 'Comercial' ? pw.Text(
+                          'Valor Unitário: ${financialBox.valorItemCaixaController}',
+                          style: const pw.TextStyle(fontSize: 18),
+                        ) : pw.SizedBox(),
                         pw.Text(
                           'Data: ${financialBox.dataItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 18),
@@ -64,7 +72,7 @@ class FinancialReportService {
                         pw.Divider(thickness: 1.5, color: PdfColors.blueGrey700),
                         pw.SizedBox(height: 10),
                         pw.Text(
-                          'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
+                          typeAccount == 'Comercial' ? 'Valor Total: ${financialBox.valorTotal}' : 'Valor da ${financialBox.tipoCaixaSelecionado}: ${financialBox.valorItemCaixaController}',
                           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Entrada' ? PdfColors.green700 : financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.orange700),
                         ),
                       ],
@@ -330,9 +338,17 @@ void generateComercialFinancialReport(List<FinancialBox> financialBoxes, double 
                           : '${financialBox.tipoEntradaSaidaSelecionado} ${financialBox.descricaoItemCaixaController}',
                           style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
                         ),
+                        pw.Text(
+                          'Quantidade: ${financialBox.quantidade}',
+                          style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
+                        ),
+                        pw.Text(
+                          'Valor Unitário: ${financialBox.valorItemCaixaController}',
+                          style: const pw.TextStyle(fontSize: 16, color: PdfColors.blueGrey700),
+                        ),
                         pw.SizedBox(height: 10),
                         pw.Text(
-                          'Valor: ${financialBox.valorItemCaixaController}',
+                          'Valor Total: ${financialBox.valorTotal}',
                           style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: financialBox.tipoCaixaSelecionado == 'Saída' ? PdfColors.red700 : PdfColors.green700),
                         ),
                       ],

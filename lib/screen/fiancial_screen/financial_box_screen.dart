@@ -361,8 +361,9 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     double reservas = 0;
 
                     for (var financialBox in financialBoxs) {
-                      String valorString = FinancialBoxService().removeCaracteres(financialBox
-                          .valorItemCaixaController!);
+                      String valorString = typeAccount == 'Pessoal' 
+                                  ? FinancialBoxService().removeCaracteres(financialBox.valorItemCaixaController!)
+                                  : FinancialBoxService().removeCaracteres(financialBox.valorTotal!);
                       double valor = double.parse(valorString);
 
                       if (financialBox.tipoCaixaSelecionado == 'Entrada') {
@@ -397,10 +398,11 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                           title:
                               '${financialBox.tipoCaixaSelecionado} ${financialBox.dataItemCaixaController}',
                           subtitle:
-                              'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : ''}',
+                              typeAccount == 'Pessoal' ? 'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : ''}'
+                              : 'Descrição: ${financialBox.descricaoItemCaixaController}\nQuantidade: ${financialBox.quantidade}\nValor Unitário: ${financialBox.valorItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : ''}',
                           icon: Icons.attach_money,
                           owner:
-                              'Valor: ${financialBox.valorItemCaixaController}',
+                              typeAccount == 'Pessoal' ? 'Valor: ${financialBox.valorItemCaixaController}' : 'Valor Total: ${financialBox.valorTotal}',
                           onOptionSelected: (option) {
                             switch (option) {
                               case 'Comprovante':
@@ -618,7 +620,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   }
 
   void onDownloadPressed(FinancialBox financialBox) async {
-    FinancialReportService().generateProofFinancialBox(financialBox);
+    FinancialReportService().generateProofFinancialBox(financialBox, typeAccount);
     customSnackBar(context, 'Comprovante gerado com sucesso!');
   }
 
@@ -703,8 +705,10 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       idFinancialBox: idFinancialBox,
       tipoCaixaSelecionado: financialBox.tipoCaixaSelecionado,
       tipoEntradaSaidaSelecionado: financialBox.tipoEntradaSaidaSelecionado,
+      quantidade: financialBox.quantidade,
       descricaoItemCaixaController: financialBox.descricaoItemCaixaController,
       valorItemCaixaController: financialBox.valorItemCaixaController,
+      valorTotal: financialBox.valorTotal,
       dataItemCaixaController: nextMonthDateString,
       pagamentoOK: financialBox.pagamentoOK,
     );
