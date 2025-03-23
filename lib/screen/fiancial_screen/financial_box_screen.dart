@@ -51,13 +51,16 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
 
   void _verificaFinancialBox() {
     listaFinancialBoxReserva = FinancialBoxService().findMyFinancialBoxReservas(
-      widget.user.uid, ordemData!,
+      widget.user.uid,
+      ordemData!,
     );
     listaFinancialBoxEntrada = FinancialBoxService().findMyFinancialBoxEntradas(
-      widget.user.uid, ordemData!,
+      widget.user.uid,
+      ordemData!,
     );
     listaFinancialBoxSaida = FinancialBoxService().findMyFinancialBoxSaidas(
-      widget.user.uid, ordemData!,
+      widget.user.uid,
+      ordemData!,
     );
     listaFinancialBoxReserva.listen((snapshot) {
       if (snapshot.docs.isEmpty) {
@@ -194,43 +197,46 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   ),
                 ),
-                typeUser == 'ADMIN' || typeUser == 'SUPER_ADMIN' ? Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: DropdownButtonFormField<String>(
-                    value: typeAccount,
-                    items: ComunsService().getTypeAccountOptions(),
-                    onChanged: (value) {
-                      setState(() {
-                        typeAccount = value!;
-                        UsuarioService().updateTypeAccountUser(
-                            widget.user.uid, typeAccount);
-                        saldoCalculado = false;
-                        saldoAtual = 0;
-                        financialBoxs = [];
-                        customSnackBar(
-                          context,
-                          typeAccount == 'Pessoal'
-                              ? 'Perfil modificado para conta $typeAccount!'
-                              : 'Perfil modificado para conta $typeAccount!',
-                          backgroundColor: Colors.green,
-                        );
-                        setState(() {});
-                      });
-                    },
-                    decoration: CustomInputDecoration.build(
-                      labelText: 'Trocar Conta',
-                    ),
-                  ),
-                ) : Container(),
+                typeUser == 'ADMIN' || typeUser == 'SUPER_ADMIN'
+                    ? Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: DropdownButtonFormField<String>(
+                          value: typeAccount,
+                          items: ComunsService().getTypeAccountOptions(),
+                          onChanged: (value) {
+                            setState(() {
+                              typeAccount = value!;
+                              UsuarioService().updateTypeAccountUser(
+                                  widget.user.uid, typeAccount);
+                              saldoCalculado = false;
+                              saldoAtual = 0;
+                              financialBoxs = [];
+                              customSnackBar(
+                                context,
+                                typeAccount == 'Pessoal'
+                                    ? 'Perfil modificado para conta $typeAccount!'
+                                    : 'Perfil modificado para conta $typeAccount!',
+                                backgroundColor: Colors.green,
+                              );
+                              setState(() {});
+                            });
+                          },
+                          decoration: CustomInputDecoration.build(
+                            labelText: 'Trocar Conta',
+                          ),
+                        ),
+                      )
+                    : Container(),
                 Row(
                   children: [
-                   Expanded(
+                    Expanded(
                       flex: 3,
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: DropdownButtonFormField<String>(
                           value: filtro,
-                          items: ComunsService().getTypeBoxOptions(isReserva!, isEntrada!, isSaida!),
+                          items: ComunsService().getTypeBoxOptions(
+                              isReserva!, isEntrada!, isSaida!),
                           onChanged: (value) {
                             setState(() {
                               filtro = value!;
@@ -259,22 +265,24 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     ),
                   ],
                 ),
-                filtro != 'reservas' ? Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: DropdownButtonFormField<String>(
-                    value: pagamentoSelecionado,
-                    items: ComunsService().getPagamentoOptions(),
-                    onChanged: (value) {
-                      setState(() {
-                        pagamentoSelecionado = value;
-                        saldoCalculado = false;
-                      });
-                    },
-                    decoration: CustomInputDecoration.build(
-                      labelText: 'Filtro pelo Pagamento',
-                    ),
-                  ),
-                ) : Container(),
+                filtro != 'reservas'
+                    ? Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: DropdownButtonFormField<String>(
+                          value: pagamentoSelecionado,
+                          items: ComunsService().getPagamentoOptions(),
+                          onChanged: (value) {
+                            setState(() {
+                              pagamentoSelecionado = value;
+                              saldoCalculado = false;
+                            });
+                          },
+                          decoration: CustomInputDecoration.build(
+                            labelText: 'Filtro pelo Pagamento',
+                          ),
+                        ),
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -282,15 +290,16 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: filtro == 'todos'
-                  ? FinancialBoxService().findMyFinancialBox(widget.user.uid, ordemData!)
+                  ? FinancialBoxService()
+                      .findMyFinancialBox(widget.user.uid, ordemData!)
                   : filtro == 'entradas'
                       ? FinancialBoxService().findMyFinancialBoxEntradas(
                           widget.user.uid, ordemData!)
-                      :  filtro == 'saidas'
-                      ? FinancialBoxService().findMyFinancialBoxSaidas(
-                          widget.user.uid, ordemData!)
-                      : FinancialBoxService().findMyFinancialBoxReservas(
-                  widget.user.uid, ordemData!),
+                      : filtro == 'saidas'
+                          ? FinancialBoxService().findMyFinancialBoxSaidas(
+                              widget.user.uid, ordemData!)
+                          : FinancialBoxService().findMyFinancialBoxReservas(
+                              widget.user.uid, ordemData!),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -312,10 +321,12 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     financialBoxs = financialBoxs.where((financialBox) {
                       final tipoCaixaSelecionado =
                           financialBox.tipoCaixaSelecionado!.toLowerCase();
-                      final tipoEntradaSaidaSelecionado =
-                          financialBox.tipoEntradaSaidaSelecionado!.toLowerCase();
-                      final descricaoItemCaixaController =
-                          financialBox.descricaoItemCaixaController!.toLowerCase();
+                      final tipoEntradaSaidaSelecionado = financialBox
+                          .tipoEntradaSaidaSelecionado!
+                          .toLowerCase();
+                      final descricaoItemCaixaController = financialBox
+                          .descricaoItemCaixaController!
+                          .toLowerCase();
                       final valorItemCaixaController =
                           financialBox.valorItemCaixaController!.toLowerCase();
                       final dataItemCaixaController =
@@ -361,9 +372,11 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     double reservas = 0;
 
                     for (var financialBox in financialBoxs) {
-                      String valorString = typeAccount == 'Pessoal' 
-                                  ? FinancialBoxService().removeCaracteres(financialBox.valorItemCaixaController!)
-                                  : FinancialBoxService().removeCaracteres(financialBox.valorTotal!);
+                      String valorString = typeAccount == 'Pessoal'
+                          ? FinancialBoxService().removeCaracteres(
+                              financialBox.valorItemCaixaController!)
+                          : FinancialBoxService()
+                              .removeCaracteres(financialBox.valorTotal!);
                       double valor = double.parse(valorString);
 
                       if (financialBox.tipoCaixaSelecionado == 'Entrada') {
@@ -393,16 +406,40 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                     itemBuilder: (context, index) {
                       final financialBox = financialBoxs[index];
                       return GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          if (typeAccount == 'Comercial') {
+                            showCustomAlertDialog(
+                                context,
+                                'Detalhes do Lançamento',
+                                'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}\nQuantidade: ${financialBox.quantidade}\nValor Unitário: ${financialBox.valorItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : 'Pagamento: Sem Classificação'}\nValor Total: ${financialBox.valorTotal}',
+                                'Atualizar Tela',
+                                'Cancelar', () async {
+                              _verificaFinancialBox();
+                            });
+                          } else {
+                            showCustomAlertDialog(
+                                context,
+                                'Detalhes do Lançamento',
+                                'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}\nValor: ${financialBox.valorItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : 'Pagamento: Sem Classificação'}',
+                                'Atualizar Tela',
+                                'Cancelar', () async {
+                              _verificaFinancialBox();
+                            });
+                          }
+                        },
                         child: CustomCardItem(
+                          color: financialBox.pagamentoOK == 'Falta Pagar'
+                              ? Colors.redAccent
+                              : Colors.white,
                           title:
                               '${financialBox.tipoCaixaSelecionado} ${financialBox.dataItemCaixaController}',
-                          subtitle:
-                              typeAccount == 'Pessoal' ? 'Tipo de ${financialBox.tipoCaixaSelecionado}: ${financialBox.tipoEntradaSaidaSelecionado}\nDescrição: ${financialBox.descricaoItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : ''}'
-                              : 'Descrição: ${financialBox.descricaoItemCaixaController}\nQuantidade: ${financialBox.quantidade}\nValor Unitário: ${financialBox.valorItemCaixaController}\n${financialBox.pagamentoOK != '' ? 'Pagamento: ${financialBox.pagamentoOK}' : ''}',
+                          subtitle: typeAccount == 'Pessoal'
+                              ? 'Descrição: ${financialBox.descricaoItemCaixaController}\n${financialBox.pagamentoOK == '' ? 'Pagameto: Sem Classificação' : ''}'
+                              : 'Descrição: ${financialBox.descricaoItemCaixaController}\nQuantidade: ${financialBox.quantidade}\nValor Unitário: ${financialBox.valorItemCaixaController}\n${financialBox.pagamentoOK == '' ? 'Pagameto: Sem Classificação' : ''}',
                           icon: Icons.attach_money,
-                          owner:
-                              typeAccount == 'Pessoal' ? 'Valor: ${financialBox.valorItemCaixaController}' : 'Valor Total: ${financialBox.valorTotal}',
+                          owner: typeAccount == 'Pessoal'
+                              ? 'Valor: ${financialBox.valorItemCaixaController}'
+                              : 'Valor Total: ${financialBox.valorTotal}',
                           onOptionSelected: (option) {
                             switch (option) {
                               case 'Comprovante':
@@ -424,7 +461,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                                 _verificaFinancialBox();
                                 break;
                               case 'Excluir':
-                                deleteFinancialBox(financialBox.idFinancialBox!);
+                                deleteFinancialBox(
+                                    financialBox.idFinancialBox!);
                                 _verificaFinancialBox();
 
                               case 'Copiar registro':
@@ -459,11 +497,11 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               borderRadius: BorderRadius.circular(30),
-              color: filtro == 'reservas' ?
-              Colors.orange
-              : saldoAtual >= 0 && filtro != 'reservas'
-                  ? Colors.teal
-                  : Colors.red, // Cor similar ao FloatingActionButton
+              color: filtro == 'reservas'
+                  ? Colors.orange
+                  : saldoAtual >= 0 && filtro != 'reservas'
+                      ? Colors.teal
+                      : Colors.red, // Cor similar ao FloatingActionButton
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,7 +517,9 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  filtro != 'reservas' ?  'R\$ ${saldoAtual.toStringAsFixed(2)}' : 'R\$ ${(saldoAtual * -1).toStringAsFixed(2)}',
+                  filtro != 'reservas'
+                      ? 'R\$ ${saldoAtual.toStringAsFixed(2)}'
+                      : 'R\$ ${(saldoAtual * -1).toStringAsFixed(2)}',
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -527,14 +567,15 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
                         if (financialBoxs.isNotEmpty) {
                           if (typeAccount == 'Pessoal') {
                             FinancialReportService().generateFinancialReport(
-                              financialBoxs, saldoAtual, filtro);
-                              customSnackBar(context,
-                              'Relatório financeiro Pessoal gerado com sucesso!');
-                          } else {
-                            FinancialReportService().generateComercialFinancialReport(
-                              financialBoxs, saldoAtual, filtro);
+                                financialBoxs, saldoAtual, filtro);
                             customSnackBar(context,
-                              'Relatório financeiro gerado com sucesso!');
+                                'Relatório financeiro Pessoal gerado com sucesso!');
+                          } else {
+                            FinancialReportService()
+                                .generateComercialFinancialReport(
+                                    financialBoxs, saldoAtual, filtro);
+                            customSnackBar(context,
+                                'Relatório financeiro gerado com sucesso!');
                           }
                         } else {
                           customSnackBar(context,
@@ -620,7 +661,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
   }
 
   void onDownloadPressed(FinancialBox financialBox) async {
-    FinancialReportService().generateProofFinancialBox(financialBox, typeAccount);
+    FinancialReportService()
+        .generateProofFinancialBox(financialBox, typeAccount);
     customSnackBar(context, 'Comprovante gerado com sucesso!');
   }
 
@@ -651,7 +693,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             }
           }
           setState(() {});
-          customSnackBar(context, 'Lançamentos copiado com sucesso para o mês seguinte!');
+          customSnackBar(
+              context, 'Lançamentos copiado com sucesso para o mês seguinte!');
         },
         showLoadingIndicator: true,
       );
@@ -679,7 +722,8 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
           financialBox, nextMonthDateString, uid);
       if (!exists) {
         _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
-        customSnackBar(context, 'Lançamento de caixa copiado com sucesso para o mês seguinte!');
+        customSnackBar(context,
+            'Lançamento de caixa copiado com sucesso para o mês seguinte!');
       } else {
         showCustomAlertDialog(
             context,
@@ -687,12 +731,14 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
             'Tem um registro com está data para o mês. Tem certeza que deseja copiar este registro?',
             'Copiar',
             'Cancelar', () async {
-              _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
-              customSnackBar(context, 'Lançamento de caixa copiado com sucesso para o mês seguinte!');
+          _copyRegister(idFinancialBox, financialBox, uid, nextMonthDateString);
+          customSnackBar(context,
+              'Lançamento de caixa copiado com sucesso para o mês seguinte!');
         });
       }
     } else {
-      customSnackBar(context, 'Lancamento de caixa já existe para o próximo mês!',
+      customSnackBar(
+          context, 'Lancamento de caixa já existe para o próximo mês!',
           backgroundColor: Colors.red);
     }
   }
@@ -713,6 +759,7 @@ class _FinancialBoxScreenState extends State<FinancialBoxScreen> {
       pagamentoOK: financialBox.pagamentoOK,
     );
 
-    FinancialBoxService().saveFinancialBox(idFinancialBox, uid, newFinancialBox);
+    FinancialBoxService()
+        .saveFinancialBox(idFinancialBox, uid, newFinancialBox);
   }
 }

@@ -48,7 +48,7 @@ class FinancialBox {
       dataItemCaixaController: map['dataItemCaixaController'] ?? '',
       papelUsuario: map['papelUsuario'] ?? '',
       pagamentoOK: map['pagamentoOK'] ?? '',
-      quantidade: map['quantidade'] ?? 0,
+      quantidade: map['quantidade'] ?? '',
       valorTotal: map['valorTotal'] ?? ''
     );
   }

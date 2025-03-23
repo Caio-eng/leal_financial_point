@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:leal_apontar/components/show_custom_alert_dialog.dart';
 import 'package:leal_apontar/screen/cotacao_screen/cotacao_screen.dart';
 import 'package:leal_apontar/screen/fiancial_screen/financial_box_screen.dart';
-import 'package:leal_apontar/screen/inventory_screen/inventory_screen.dart';
 import 'package:leal_apontar/screen/perfil_screen/users_screen.dart';
 
 import '../screen/home_screen.dart';
@@ -28,7 +27,6 @@ class _MenuState extends State<Menu> {
   var nome;
   var photoUrl;
   var typeUser;
-  var typeAccount;
 
   @override
   void initState() {
@@ -57,8 +55,8 @@ class _MenuState extends State<Menu> {
       if (userProfileSnapshot.exists) {
         Map<String, dynamic> userProfileData = userProfileSnapshot.data() as Map<String, dynamic>;
         typeUser = userProfileData['typeUser'];
-        typeAccount = userProfileData['typeAccount'];
         isAtivo = userProfileData['isAtivo'];
+
         setState(() {
           perfilExistente = true;
         });
@@ -125,16 +123,6 @@ class _MenuState extends State<Menu> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => FinancialBoxScreen(user: widget.user)));
-            },
-          ) : Container(),
-          typeUser == 'SUPER_ADMIN' || typeUser == 'ADMIN' && typeAccount == 'Comercial' ? ListTile(
-            leading: const Icon(Icons.inventory),
-            title: const Text('Estoque'),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => InventoryScreen(user: widget.user)));
             },
           ) : Container(),
           ListTile(
