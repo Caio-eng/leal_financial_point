@@ -43,7 +43,7 @@ class _RegisterPerfilScreenState extends State<RegisterPerfilScreen> {
   User? user;
   String? photoUrl;
   Uint8List? _imageBytes;
-  String? typeAccount;
+  String? typeAccount = 'Pessoal';
   String? typeUser;
   String? statusElevacao;
 

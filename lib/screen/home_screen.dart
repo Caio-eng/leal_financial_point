@@ -101,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ListTile(
                         leading: Icon(Icons.warning),
                         title:  Text('Para usar a aplicação necessita completar o perfil!'),
-                        subtitle: Text('Entre em contato com o administrador do sistema'),
+                        subtitle: Text('Clique no menu, depois clique na imagem e clique concluir perfil!'),
                       ),
                     ],
                   ),
